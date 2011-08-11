@@ -1,14 +1,16 @@
+SOURCES=src/flurfunk/core.cljs src/flurfunk/client.cljs
+
 all: flurfunk.js
 dev: flurfunk-dev.js
 
 install: flurfunk.js
 	cp flurfunk.js flurfunk.css ../flurfunk-server/src/main/webapp
 
-flurfunk.js: src/flurfunk/core.cljs
-	cljsc src/flurfunk/core.cljs '{:output-to "flurfunk-dev.js" :optimizations :advanced}'
+flurfunk.js: $(SOURCES)
+	cljsc src '{:output-to "flurfunk-dev.js" :optimizations :advanced}'
 
-flurfunk-dev.js: src/flurfunk/core.cljs
-	cljsc src/flurfunk/core.cljs '{:output-dir "out-dev" :output-to "flurfunk-dev.js" :pretty-print true}'
+flurfunk-dev.js: $(SOURCES)
+	cljsc src '{:output-dir "out-dev" :output-to "flurfunk-dev.js" :pretty-print true}'
 
 clean:
 	rm -f flurfunk.js
