@@ -2,7 +2,7 @@ all: flurfunk.js
 dev: flurfunk-dev.js
 
 install: flurfunk.js
-	cp flurfunk.js ../flurfunk-server/src/main/webapp
+	cp flurfunk.js flurfunk.css ../flurfunk-server/src/main/webapp
 
 flurfunk.js: src/flurfunk/core.cljs
 	cljsc src/flurfunk/core.cljs '{:output-to "flurfunk-dev.js" :optimizations :advanced}'
