@@ -12,7 +12,7 @@
         text (:text message)
         content (dom/createDom "p" nil (str author ": " text))
         message-control (goog.ui/Control. content)]
-    (.setId message-control id)
+    (.setId message-control (str "message-" id))
     message-control))
 
 (defn- update-message-container [message-container messages]
@@ -23,10 +23,10 @@
                true)))
 
 (defn- fetch-messages []
-  [{:id "message-1" :author "author-1" :text "Hello, World 1!"}
-   {:id "message-2" :author "author-2" :text "Hello, World 2!"}
-   {:id "message-3" :author "author-3" :text "Hello, World 3!"}
-   {:id "message-4" :author "author-4" :text "Hello, World 4!"}])
+  [{:id "1" :author "author-1" :text "Hello, World 1!"}
+   {:id "2" :author "author-2" :text "Hello, World 2!"}
+   {:id "3" :author "author-3" :text "Hello, World 3!"}
+   {:id "4" :author "author-4" :text "Hello, World 4!"}])
 
 (defn- send-message [author text]
   (window/alert (str "Sent: " author ": " text)))
