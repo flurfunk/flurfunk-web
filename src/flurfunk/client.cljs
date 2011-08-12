@@ -3,8 +3,6 @@
             [goog.dom.xml :as xml]
             [goog.net.XhrIo :as XhrIo]))
 
-;; TODO: Make it possible to use the stub functions in dev mode.
-
 ;; TODO: Private
 (def stub-messages [])
 
@@ -12,8 +10,8 @@
   (callback stub-messages))
 
 (defn- send-message-stub [message callback]
-  (def messages (conj stub-messages
-                      (conj message {:id (. (js/Date.) (getTime))})))
+  (def stub-messages (conj stub-messages
+                           (conj message {:id (. (js/Date.) (getTime))})))
   (callback))
 
 (defn- get-request [uri callback]
@@ -45,8 +43,15 @@
 (defn- send-message-http [message callback]
   (post-request "/message" (fn [] (callback)) (marshal-message message)))
 
+(defn- stub-client? []
+  js/flurfunkStubClient)
+
 (defn get-messages [callback]
-  (get-messages-http callback))
+  (if (stub-client?)
+    (get-messages-stub callback)
+    (get-messages-http callback)))
 
 (defn send-message [message callback]
-  (send-message-http message callback))
+  (if (stub-client?)
+    (send-message-stub message callback)
+    (send-message-http message callback)))
