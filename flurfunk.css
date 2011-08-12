@@ -5,3 +5,24 @@
 h1 {
     color: #cc0000;
 }
+
+div {
+    margin: 10px 0;
+}
+
+div.goog-container>* {
+    width: 300px;
+    border: 1px solid black;
+    margin: 5px;
+    padding: 5px;
+}
+
+label {
+    margin-right: 5px;
+    vertical-align: top;
+}
+
+textarea {
+    width: 200px;
+    height: 100px;
+}

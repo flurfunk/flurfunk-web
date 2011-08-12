@@ -4,8 +4,7 @@
             [goog.events :as events]
             [goog.ui.Button :as Button]
             [goog.ui.Container :as Container]
-            [goog.ui.Container :as Control]
-            [goog.ui.Textarea :as Textarea]))
+            [goog.ui.Container :as Control]))
 
 (defn- create-message-control [message]
   (let [id (:id message)
@@ -27,28 +26,43 @@
 
 (defn -main []
   (let [header (dom/createDom "h1" nil "Flurfunk")
-        message-textarea (goog.ui.Textarea.)
+        author-div (dom/createDom "div")
+        author-label (dom/createDom "label" nil "Your name:")
+        author-input (dom/createDom "input" {:type "text"})
+        text-div (dom/createDom "div")
+        text-label (dom/createDom "label" nil "Your message:")
+        text-textarea (dom/createDom "textarea")
         send-button (goog.ui/Button. "Send message")
         message-container (goog.ui/Container.)
         update-button (goog.ui/Button. "Update messages")]
     (dom/appendChild document.body header)
-    (.render message-textarea document.body)
+    
+    (dom/appendChild author-div author-label)
+    (dom/appendChild author-div author-input)
+    (dom/appendChild document.body author-div)
+    
+    (dom/appendChild text-div text-label)
+    (dom/appendChild text-div text-textarea)
+    (dom/appendChild document.body text-div)
+    
     (.render send-button document.body)
     (events/listen send-button goog.ui.Component/EventType.ACTION
                    (fn [e]
-                     (let [text (. message-textarea (getValue))]
-                       (when (not (empty? text))
+                     (let [author (.value author-input)
+                           text (.value text-textarea)]
+                       (when (not (or (empty? author) (empty? text)))
                          (client/send-message
-                          ;; TODO: Let the user enter a name
-                          {:author "anonymous" :text text}
+                          {:author author :text text}
                           (fn []
-                            (.setValue message-textarea "")
+                            (set! (.value text-textarea) "")
                             (update-message-container message-container)))))))
-    (.render message-container document.body)
+
     (.render update-button document.body)
     (events/listen update-button goog.ui.Component/EventType.ACTION
                    (fn [e]
                      (update-message-container message-container)))
+    (.render message-container document.body)
+
     (update-message-container message-container)))
 
 (-main)
