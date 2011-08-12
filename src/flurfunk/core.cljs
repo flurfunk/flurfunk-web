@@ -37,12 +37,13 @@
     (events/listen send-button goog.ui.Component/EventType.ACTION
                    (fn [e]
                      (let [text (. message-textarea (getValue))]
-                       (client/send-message
-                        ;; TODO: Let the user enter a name
-                        {:author "anonymous" :text text}
-                        (fn []
-                          (.setValue message-textarea "")
-                          (update-message-container message-container))))))
+                       (when (not (empty? text))
+                         (client/send-message
+                          ;; TODO: Let the user enter a name
+                          {:author "anonymous" :text text}
+                          (fn []
+                            (.setValue message-textarea "")
+                            (update-message-container message-container)))))))
     (.render message-container document.body)
     (.render update-button document.body)
     (events/listen update-button goog.ui.Component/EventType.ACTION
