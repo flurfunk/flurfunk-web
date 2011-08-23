@@ -1,28 +1,106 @@
 * {
-    font-family: Arial;
+    font-family: Helvetica, Arial, sans;
+    color: #333333;
+}
+
+html {
+    background-color: #f6f6f6;
+}
+
+body {
+    width: 800px;
+    margin: auto;
 }
 
 h1 {
-    color: #cc0000;
-}
-
-div {
+    color: #c00;
+    font-size: 35px;
     margin: 10px 0;
 }
 
-div.goog-container>* {
-    width: 300px;
-    border: 1px solid black;
-    margin: 5px;
-    padding: 5px;
-}
 
 label {
+    font-size: 15px;
     margin-right: 5px;
-    vertical-align: top;
+    vertical-align: middle;
+}
+
+input, textarea {
+    border: 1px solid #bbb;
+}
+
+input:focus, textarea:focus {
+    border-color: #999;
+    outline: none;
 }
 
 textarea {
-    width: 200px;
-    height: 100px;
+    width: 480px;
+    height: 60px;
+    display: block;
+    margin: 0 auto 5px auto;
+}
+
+div.content, div.sidebar {
+    float: left;
+    border: 1px solid #bbb;
+    background-color: #fff;
+}
+
+div.content {
+    width: 520px;
+    padding: 20px 0 0 0;
+}
+
+div.content button.goog-button {
+    margin-left: 17px;
+}
+
+div.sidebar {
+    border-left: 0;
+    padding: 20px;
+    text-align: center;
+}
+
+div.sidebar div {
+    margin-bottom: 10px;
+}
+
+div.goog-container {
+    margin-top: 20px;
+    font-size: 14px;
+}
+
+div.goog-container>* {
+    border-top: 1px solid #ddd;
+    padding: 5px 10px;
+}
+
+div.goog-container span.author {
+    display: block;
+    font-weight: bold;
+}
+
+div.goog-container span.text {
+    display: block;
+    padding: 5px;
+}
+
+button.goog-button {
+    color: #fff;
+    background-color: #d44;
+    border: 1px solid #b00;
+    border-radius: 5px;
+    padding: 5px;
+    font-size: 12px;
+    font-weight: bold;
+}
+
+button.goog-button:hover {
+    background-color: #e55;
+}
+
+button.goog-button:active {
+    border-color: #000;
+    background-color: #c33;
 }
