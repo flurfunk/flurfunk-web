@@ -7,14 +7,15 @@
             [goog.ui.Control :as Control]))
 
 (defn- create-dom []
-  (dom/build [:div
+  (dom/build [:div#content
               [:h1 "Flurfunk"]
-              [:div#content
-               [:div#author-name
-                [:label "Your name:"]
-                [:input#author-name-input {:type "text"}]]
-               [:textarea#message-textarea]
-               [:button#send-button "Send message"]
+              [:div#messages
+               [:div#message-input
+                [:div
+                 [:label "Your name:"]
+                 [:input#author-name-input {:type "text"}]]
+                [:textarea#message-textarea]
+                [:button#send-button "Send message"]]
                [:div#message-container]]]))
 
 (defn- create-message-control [message]

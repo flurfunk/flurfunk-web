@@ -7,12 +7,6 @@ html {
     background-color: #f6f6f6;
 }
 
-h1, div#content {
-    width: 600px;
-    margin-left: auto;
-    margin-right: auto;
-}
-
 h1 {
     color: #c00;
     font-size: 35px;
@@ -28,6 +22,7 @@ label {
 }
 
 input, textarea {
+    margin: 2px 0 5px 0;
     border: 1px solid #bbb;
     vertical-align: middle;
     font-size: 15px;
@@ -39,20 +34,32 @@ input:focus, textarea:focus {
 }
 
 textarea {
-    width: 560px;
+    width: 100%;
     height: 60px;
     display: block;
-    margin: 5px auto;
+    padding: 0;
 }
 
 div#content {
+    width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+div#messages {
     padding: 20px 0 0 0;
     background-color: #fff;
     border: 1px solid #bbb;
 }
 
-div#content div#author-name, div#content button {
-    margin-left: 17px;
+div#message-input {
+    width: 560px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+div#message-input button {
+    margin-left: 0;
 }
 
 div#message-container {
