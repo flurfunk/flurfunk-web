@@ -10,12 +10,12 @@
   (dom/build [:div
               [:h1 "Flurfunk"]
               [:div#content
+               [:div#author-name
+                [:label "Your name:"]
+                [:input#author-name-input {:type "text"}]]
                [:textarea#message-textarea]
                [:button#send-button "Send message"]
-               [:div#message-container]]
-              [:div#sidebar
-               [:label "Your name:"]
-               [:input#author-name-input {:type "text"}]]]))
+               [:div#message-container]]]))
 
 (defn- create-message-control [message]
   (let [content (dom/build [:div

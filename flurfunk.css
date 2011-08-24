@@ -7,26 +7,30 @@ html {
     background-color: #f6f6f6;
 }
 
-body {
-    width: 800px;
-    margin: auto;
+h1, div#content {
+    width: 600px;
+    margin-left: auto;
+    margin-right: auto;
 }
 
 h1 {
     color: #c00;
     font-size: 35px;
-    margin: 10px 0;
+    margin-top: 10px;
+    margin-bottom: 10px;
 }
 
-
 label {
-    font-size: 15px;
-    margin-right: 5px;
+    font-size: 13px;
+    font-weight: bold;
     vertical-align: middle;
+    margin-right: 5px;
 }
 
 input, textarea {
     border: 1px solid #bbb;
+    vertical-align: middle;
+    font-size: 15px;
 }
 
 input:focus, textarea:focus {
@@ -35,35 +39,20 @@ input:focus, textarea:focus {
 }
 
 textarea {
-    width: 480px;
+    width: 560px;
     height: 60px;
     display: block;
-    margin: 0 auto 5px auto;
-}
-
-div#content, div#sidebar {
-    float: left;
-    border: 1px solid #bbb;
-    background-color: #fff;
+    margin: 5px auto;
 }
 
 div#content {
-    width: 520px;
     padding: 20px 0 0 0;
+    background-color: #fff;
+    border: 1px solid #bbb;
 }
 
-div#content button {
+div#content div#author-name, div#content button {
     margin-left: 17px;
-}
-
-div#sidebar {
-    border-left: 0;
-    padding: 20px;
-    text-align: center;
-}
-
-div#sidebar div {
-    margin-bottom: 10px;
 }
 
 div#message-container {
