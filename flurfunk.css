@@ -41,52 +41,52 @@ textarea {
     margin: 0 auto 5px auto;
 }
 
-div.content, div.sidebar {
+div#content, div#sidebar {
     float: left;
     border: 1px solid #bbb;
     background-color: #fff;
 }
 
-div.content {
+div#content {
     width: 520px;
     padding: 20px 0 0 0;
 }
 
-div.content button.goog-button {
+div#content button {
     margin-left: 17px;
 }
 
-div.sidebar {
+div#sidebar {
     border-left: 0;
     padding: 20px;
     text-align: center;
 }
 
-div.sidebar div {
+div#sidebar div {
     margin-bottom: 10px;
 }
 
-div.goog-container {
+div#message-container {
     margin-top: 20px;
     font-size: 14px;
 }
 
-div.goog-container>* {
+div#message-container>* {
     border-top: 1px solid #ddd;
     padding: 5px 10px;
 }
 
-div.goog-container span.author {
+div#message-container span.author {
     display: block;
     font-weight: bold;
 }
 
-div.goog-container span.text {
+div#message-container span.text {
     display: block;
     padding: 5px;
 }
 
-button.goog-button {
+button {
     color: #fff;
     background-color: #d44;
     border: 1px solid #b00;
@@ -96,11 +96,11 @@ button.goog-button {
     font-weight: bold;
 }
 
-button.goog-button:hover {
+button:hover {
     background-color: #e55;
 }
 
-button.goog-button:active {
+button:active {
     border-color: #000;
     background-color: #c33;
 }

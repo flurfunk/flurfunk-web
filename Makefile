@@ -1,4 +1,6 @@
-SOURCES=src/flurfunk/core.cljs src/flurfunk/client.cljs
+SOURCES=src/flurfunk/core.cljs \
+	src/flurfunk/client.cljs \
+	src/flurfunk/dom-helpers.cljs
 
 all: flurfunk.js
 dev: flurfunk-dev.js
