@@ -100,3 +100,10 @@ button:active {
     border-color: #000;
     background-color: #c33;
 }
+
+button.goog-button-disabled, button.goog-button-disabled:hover,
+button.goog-button-disabled:active {
+    background-color: #d44;
+    border: 1px solid #b00;
+    opacity: 0.5;
+}

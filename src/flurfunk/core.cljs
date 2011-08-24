@@ -33,16 +33,15 @@
      (doseq [message messages]
        (.addChild message-container (create-message-control message) true)))))
 
-(defn- send-message [message-container]
-  (let [message-textarea (dom/get-element :message-textarea)
-        text (.value message-textarea)
-        author (.value (dom/get-element :author-name-input))]
-    (when (not (or (empty? author) (empty? text)))
-      (client/send-message
-       {:author author :text text}
-       (fn []
-         (set! (.value message-textarea) "")
-         (update-message-container message-container))))))
+(defn- send-message [message-container send-button]
+  (let [message-textarea (dom/get-element :message-textarea)]
+    (client/send-message
+     {:author (.value (dom/get-element :author-name-input))
+      :text (.value message-textarea)}
+     (fn []
+       (set! (.value message-textarea) "")
+       (.setEnabled send-button false)
+       (update-message-container message-container)))))
 
 (defn -main []
   (dom/append document.body (create-dom))
@@ -50,8 +49,19 @@
         message-container (goog.ui/Container.)]
     (.decorate send-button (dom/get-element :send-button))
     (events/listen send-button goog.ui.Component/EventType.ACTION
-                   (fn [e] (send-message message-container)))
+                   (fn [e] (send-message message-container send-button)))
     (.decorate message-container (dom/get-element :message-container))
+    (let [author-name-input (dom/get-element :author-name-input)
+          message-textarea (dom/get-element :message-textarea)
+          change-handler
+          (fn [e]
+            (.setEnabled send-button
+                         (not (or (empty? (.value author-name-input))
+                                  (empty? (.value message-textarea))))))]
+      (doseq [element [author-name-input message-textarea]]
+        (events/listen element goog.events/EventType.KEYUP change-handler)
+        (events/listen element goog.events/EventType.CHANGE change-handler)))
+    (.setEnabled send-button false)
     (js/setInterval (fn [] (update-message-container message-container)) 1000)
     (update-message-container message-container)))
 
