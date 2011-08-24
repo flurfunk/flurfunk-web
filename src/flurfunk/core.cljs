@@ -14,10 +14,8 @@
                [:button#send-button "Send message"]
                [:div#message-container]]
               [:div#sidebar
-               [:div
-                [:label "Your name:"]
-                [:input#author-name-input {:type "text"}]]
-               [:button#update-button "Update messages"]]]))
+               [:label "Your name:"]
+               [:input#author-name-input {:type "text"}]]]))
 
 (defn- create-message-control [message]
   (let [content (dom/build [:div
@@ -48,15 +46,12 @@
 (defn -main []
   (dom/append document.body (create-dom))
   (let [send-button (goog.ui/Button. "Send message")
-        message-container (goog.ui/Container.)
-        update-button (goog.ui/Button. "Update messages")]
+        message-container (goog.ui/Container.)]
     (.decorate send-button (dom/get-element :send-button))
     (events/listen send-button goog.ui.Component/EventType.ACTION
                    (fn [e] (send-message message-container)))
     (.decorate message-container (dom/get-element :message-container))
-    (.decorate update-button (dom/get-element :update-button))
-    (events/listen update-button goog.ui.Component/EventType.ACTION
-                   (fn [e] (update-message-container message-container)))
+    (js/setInterval (fn [] (update-message-container message-container)) 1000)
     (update-message-container message-container)))
 
 (-main)
