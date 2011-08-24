@@ -4,7 +4,7 @@
             [goog.events :as events]
             [goog.ui.Button :as Button]
             [goog.ui.Container :as Container]
-            [goog.ui.Container :as Control]))
+            [goog.ui.Control :as Control]))
 
 (defn- create-message-control [message]
   (let [id (:id message)
