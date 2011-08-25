@@ -10,8 +10,8 @@
   (callback stub-messages))
 
 (defn- send-message-stub [message callback]
-  (def stub-messages (conj stub-messages
-                           (conj message {:id (. (js/Date.) (getTime))})))
+  (def stub-messages (cons (conj message {:id (. (js/Date.) (getTime))})
+                           stub-messages))
   (callback))
 
 (defn- get-request [uri callback]
