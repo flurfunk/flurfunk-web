@@ -35,12 +35,13 @@
 
 (defn- send-message [message-container send-button]
   (let [message-textarea (dom/get-element :message-textarea)]
+    (.setEnabled send-button false)
     (client/send-message
      {:author (.value (dom/get-element :author-name-input))
       :text (.value message-textarea)}
      (fn []
        (set! (.value message-textarea) "")
-       (.setEnabled send-button false)
+       (. message-textarea (focus))
        (update-message-container message-container)))))
 
 (defn -main []
@@ -59,9 +60,9 @@
                          (not (or (empty? (.value author-name-input))
                                   (empty? (.value message-textarea))))))]
       (doseq [element [author-name-input message-textarea]]
-        (events/listen element goog.events/EventType.KEYUP change-handler)
-        (events/listen element goog.events/EventType.CHANGE change-handler)))
-    (.setEnabled send-button false)
+        (events/listen element goog.events/EventType.INPUT change-handler))
+      (.setEnabled send-button false)
+      (. author-name-input (focus)))
     (js/setInterval (fn [] (update-message-container message-container)) 1000)
     (update-message-container message-container)))
 
