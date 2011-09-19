@@ -3,8 +3,7 @@
             [goog.dom.xml :as xml]
             [goog.net.XhrIo :as XhrIo]))
 
-;; TODO: Private
-(def stub-messages [])
+(def ^{:private true} stub-messages [])
 
 (defn- get-messages-stub [callback]
   (callback stub-messages))
