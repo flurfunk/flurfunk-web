@@ -6,7 +6,7 @@ all: flurfunk.js
 dev: flurfunk-dev.js
 
 install: flurfunk.js
-	cp flurfunk.js flurfunk.css ../flurfunk-server/src/main/webapp
+	cp flurfunk.js flurfunk.css ../flurfunk-server/resources/public
 
 flurfunk.js: $(SOURCES)
 	rm -rf out flurfunk.js
