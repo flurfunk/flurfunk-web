@@ -16,6 +16,12 @@
 (defn- get-request [uri callback]
   (XhrIo/send uri callback))
 
+(defn- wrap-context [uri]
+  (let [pathname (.pathname js/location)]
+    (str pathname
+         (if (not (= "/" (nth pathname (- 1 (.length pathname))))) "/")
+         uri)))
+
 (defn- unmarshal-messages [messages]
   (let [xml (xml/loadXml messages)
         message-tags (dom/getChildren (.firstChild xml))]
@@ -27,7 +33,7 @@
          message-tags)))
 
 (defn- get-messages-http [callback]
-  (get-request "/messages"
+  (get-request (wrap-context "messages")
                (fn [e]
                  (let [target (.target e)
                        text (. target (getResponseText))]
@@ -40,7 +46,8 @@
   (str "<message author='" (:author message) "'>" (:text message) "</message>"))
 
 (defn- send-message-http [message callback]
-  (post-request "/message" (fn [] (callback)) (marshal-message message)))
+  (post-request (wrap-context "message")
+                (fn [] (callback)) (marshal-message message)))
 
 (defn- stub-client? []
   js/flurfunkStubClient)
