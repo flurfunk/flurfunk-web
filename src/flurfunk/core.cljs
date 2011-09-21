@@ -23,13 +23,20 @@
 (defn- map-str [f coll]
   (apply str (map f coll)))
 
+(defn- replace-all
+  ([string from to]
+     (.replace string (js/RegExp. from "g") to))
+  ([string replacements]
+     (reduce (fn [string [from to]]
+               (replace-all string from to)) string replacements)))
+
 (defn- format-message-text [text]
   (let [trimmed-text (string/trim text)
         paragraphs (vec (.split trimmed-text "\n\n"))
         text-with-paragraphs (map-str (fn [paragraph]
                                         (str "<p>" paragraph "</p>"))
                                       paragraphs)]
-    (dom/html (.replace text-with-paragraphs (js/RegExp. "\n" "g") "<br/>"))))
+    (dom/html (replace-all text-with-paragraphs "\n" "<br/>"))))
 
 (defn- create-message-control [message]
   (let [content (dom/build [:div
@@ -46,12 +53,19 @@
      (doseq [message messages]
        (.addChild message-container (create-message-control message) true)))))
 
+(defn- escape-html [string]
+  (replace-all string [["&" "&amp;"]
+                       ["\"" "&quot;"]
+                       ["<" "&lt;"]
+                       [">" "&gt;"]]))
+
 (defn- send-message [message-container send-button]
-  (let [message-textarea (dom/get-element :message-textarea)]
+  (let [message-textarea (dom/get-element :message-textarea)
+        escaped-text (escape-html (.value message-textarea))]
     (.setEnabled send-button false)
     (client/send-message
      {:author (.value (dom/get-element :author-name-input))
-      :text (.value message-textarea)}
+      :text escaped-text}
      (fn []
        (set! (.value message-textarea) "")
        (. message-textarea (focus))
