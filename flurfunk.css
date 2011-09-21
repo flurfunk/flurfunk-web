@@ -77,9 +77,17 @@ div#message-container span.author {
     font-weight: bold;
 }
 
-div#message-container span.text {
-    display: block;
+div#message-container div.text {
     padding: 5px;
+}
+
+div#message-container div.text p {
+    margin-top: 10px;
+    margin-bottom: 0;
+}
+
+div#message-container div.text p:first-child {
+    margin-top: 0;
 }
 
 button {

@@ -2,6 +2,7 @@
   (:require [flurfunk.client :as client]
             [flurfunk.dom-helpers :as dom]
             [goog.events :as events]
+            [goog.string :as string]
             [goog.net.Cookies :as Cookies]
             [goog.ui.Button :as Button]
             [goog.ui.Container :as Container]
@@ -19,10 +20,21 @@
                 [:button#send-button "Send message"]]
                [:div#message-container]]]))
 
+(defn- map-str [f coll]
+  (apply str (map f coll)))
+
+(defn- format-message-text [text]
+  (let [trimmed-text (string/trim text)
+        paragraphs (vec (.split trimmed-text "\n\n"))
+        text-with-paragraphs (map-str (fn [paragraph]
+                                        (str "<p>" paragraph "</p>"))
+                                      paragraphs)]
+    (dom/html (.replace text-with-paragraphs (js/RegExp. "\n" "g") "<br/>"))))
+
 (defn- create-message-control [message]
   (let [content (dom/build [:div
                             [:span.author (:author message)]
-                            [:span.text (:text message)]])
+                            [:div.text (format-message-text (:text message))]])
         message-control (goog.ui/Control. content)]
     (.setId message-control (str "message-" (:id message)))
     message-control))
