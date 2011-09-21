@@ -5,9 +5,6 @@ SOURCES=src/flurfunk/core.cljs \
 all: flurfunk.js
 dev: flurfunk-dev.js
 
-install: flurfunk.js
-	cp flurfunk.js flurfunk.css ../flurfunk-server/resources/public
-
 flurfunk.js: $(SOURCES)
 	rm -rf out flurfunk.js
 	cljsc src '{:output-to "flurfunk.js" :optimizations :advanced}'
