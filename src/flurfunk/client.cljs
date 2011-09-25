@@ -3,15 +3,19 @@
             [goog.dom.xml :as xml]
             [goog.net.XhrIo :as XhrIo]))
 
-(def ^{:private true} stub-messages [])
+(defprotocol Client
+  (client-get-messages [this callback])
+  (client-send-message [this message callback]))
 
-(defn- get-messages-stub [callback]
-  (callback stub-messages))
+(deftype StubClient [messages] Client
+  (client-get-messages [this callback] (callback @messages))
 
-(defn- send-message-stub [message callback]
-  (def stub-messages (cons (conj message {:id (. (js/Date.) (getTime))})
-                           stub-messages))
-  (callback))
+  (client-send-message
+   [this message callback]
+   (swap! messages (fn [messages]
+                     (cons (conj message {:id (. (js/Date.) (getTime))})
+                           messages)))
+   (callback)))
 
 (defn- get-request [uri callback]
   (XhrIo/send uri callback))
@@ -32,32 +36,35 @@
              {:id id :author author :text text}))
          message-tags)))
 
-(defn- get-messages-http [callback]
-  (get-request (wrap-context "messages")
-               (fn [e]
-                 (let [target (.target e)
-                       text (. target (getResponseText))]
-                   (callback (unmarshal-messages text))))))
-
 (defn- post-request [uri callback content]
   (XhrIo/send uri (fn [e] (callback)) "post", content))
 
 (defn- marshal-message [message]
   (str "<message author='" (:author message) "'>" (:text message) "</message>"))
 
-(defn- send-message-http [message callback]
-  (post-request (wrap-context "message")
-                (fn [] (callback)) (marshal-message message)))
+(deftype HttpClient [] Client
+  (client-get-messages
+   [this callback]
+   (get-request (wrap-context "messages")
+                (fn [e]
+                  (let [target (.target e)
+                        text (. target (getResponseText))]
+                    (callback (unmarshal-messages text))))))
 
-(defn- stub-client? []
-  js/flurfunkStubClient)
+  (client-send-message
+   [this message callback]
+   (post-request (wrap-context "message")
+                 (fn [] (callback)) (marshal-message message))))
+
+(defn- make-client []
+  (if js/flurfunkStubClient
+    (StubClient. (atom []))
+    (HttpClient.)))
+
+(def ^{:private true} client (make-client))
 
 (defn get-messages [callback]
-  (if (stub-client?)
-    (get-messages-stub callback)
-    (get-messages-http callback)))
+  (client-get-messages client callback))
 
 (defn send-message [message callback]
-  (if (stub-client?)
-    (send-message-stub message callback)
-    (send-message-http message callback)))
+  (client-send-message client message callback))
