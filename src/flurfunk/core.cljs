@@ -20,6 +20,18 @@
                 [:button#send-button "Send message"]]
                [:div#message-container]]]))
 
+(defn- leading-zero [number]
+  (str (if (< number 10) "0") number))
+
+(defn- format-timestamp [timestamp]
+  (let [date (js/Date. timestamp)]
+    (.log js/console timestamp)
+    (str (. date (getFullYear)) "-"
+         (leading-zero (+ (. date (getMonth)) 1)) "-"
+         (leading-zero (. date (getDate))) " "
+         (leading-zero (. date (getHours))) ":"
+         (leading-zero (. date (getMinutes))))))
+
 (defn- map-str [f coll]
   (apply str (map f coll)))
 
@@ -41,6 +53,8 @@
 (defn- create-message-control [message]
   (let [content (dom/build [:div
                             [:span.author (:author message)]
+                            [:span.timestamp (format-timestamp
+                                              (:timestamp message))]
                             [:div.text (format-message-text (:text message))]])
         message-control (goog.ui/Control. content)]
     (.setId message-control (str "message-" (:id message)))

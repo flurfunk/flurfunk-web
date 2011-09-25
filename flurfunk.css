@@ -73,8 +73,14 @@ div#message-container>* {
 }
 
 div#message-container span.author {
-    display: block;
     font-weight: bold;
+}
+
+div#message-container span.timestamp {
+    float: right;
+    clear: right;
+    font-size: 12px;
+    font-style: italic;
 }
 
 div#message-container div.text {

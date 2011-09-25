@@ -13,7 +13,8 @@
   (client-send-message
    [this message callback]
    (swap! messages (fn [messages]
-                     (cons (conj message {:id (. (js/Date.) (getTime))})
+                     (cons (conj message {:id (str (count messages))
+                                          :timestamp (. (js/Date.) (getTime))})
                            messages)))
    (callback)))
 
@@ -32,8 +33,10 @@
     (map (fn [message-tag]
            (let [text (.textContent message-tag)
                  id (. message-tag (getAttribute "id"))
-                 author (. message-tag (getAttribute "author"))]
-             {:id id :author author :text text}))
+                 author (. message-tag (getAttribute "author"))
+                 timestamp (js/parseInt (. message-tag
+                                           (getAttribute "timestamp")))]
+             {:id id :author author :timestamp timestamp :text text}))
          message-tags)))
 
 (defn- post-request [uri callback content]
