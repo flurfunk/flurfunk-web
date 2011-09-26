@@ -8,6 +8,8 @@
             [goog.ui.Container :as Container]
             [goog.ui.Control :as Control]))
 
+(def ^{:private true} last-fetched nil)
+
 (defn- create-dom []
   (dom/build [:div#content
               [:h1 "Flurfunk"]
@@ -25,7 +27,6 @@
 
 (defn- format-timestamp [timestamp]
   (let [date (js/Date. timestamp)]
-    (.log js/console timestamp)
     (str (. date (getFullYear)) "-"
          (leading-zero (+ (. date (getMonth)) 1)) "-"
          (leading-zero (. date (getDate))) " "
@@ -61,11 +62,15 @@
     message-control))
 
 (defn- update-message-container [message-container]
-  (client/get-messages
-   (fn [messages]
-     (.removeChildren message-container true)
-     (doseq [message messages]
-       (.addChild message-container (create-message-control message) true)))))
+  (let [callback (fn [messages]
+                   (when (> (count messages) 0)
+                     (def last-fetched (:timestamp (first messages)))
+                     (doseq [message (reverse messages)]
+                       (.addChildAt message-container
+                                    (create-message-control message) 0 true))))]
+    (if (nil? last-fetched)
+      (client/get-messages callback)
+      (client/get-messages callback last-fetched))))
 
 (defn- escape-html [string]
   (replace-all string [["&" "&amp;"]

@@ -4,11 +4,15 @@
             [goog.net.XhrIo :as XhrIo]))
 
 (defprotocol Client
-  (client-get-messages [this callback])
+  (client-get-messages [this callback] [this callback since])
   (client-send-message [this message callback]))
 
 (deftype StubClient [messages] Client
   (client-get-messages [this callback] (callback @messages))
+
+  (client-get-messages
+   [this callback since]
+   (callback (filter (fn [message] (> (:timestamp message) since)) @messages)))
 
   (client-send-message
    [this message callback]
@@ -48,7 +52,13 @@
 (deftype HttpClient [] Client
   (client-get-messages
    [this callback]
-   (get-request (wrap-context "messages")
+   (client-get-messages this callback nil))
+
+  (client-get-messages
+   [this callback since]
+   (get-request (wrap-context (if (nil? since)
+                                "messages"
+                                (str "messages?since=" since)))
                 (fn [e]
                   (let [target (.target e)
                         text (. target (getResponseText))]
@@ -66,8 +76,11 @@
 
 (def ^{:private true} client (make-client))
 
-(defn get-messages [callback]
-  (client-get-messages client callback))
+(defn get-messages
+  ([callback]
+     (client-get-messages client callback))
+  ([callback since]
+     (client-get-messages client callback since)))
 
 (defn send-message [message callback]
   (client-send-message client message callback))
