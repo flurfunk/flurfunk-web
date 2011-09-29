@@ -6,6 +6,11 @@
         <link rel="stylesheet" type="text/css" href="flurfunk.css"/>
     </head>
     <body>
+        <script>
+            // Use a server on the same host, Jetty or Tomcat.
+            var flurfunkServer = location.href.replace("index.html", "")
+                .replace("flurfunk-web", "flurfunk-server").replace(/\/$/, "");
+        </script>
         <script src="flurfunk.js"></script>
     </body>
 </html>

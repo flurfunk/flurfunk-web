@@ -70,9 +70,9 @@
                  (fn [] (callback)) (marshal-message message))))
 
 (defn- make-client []
-  (if js/flurfunkStubClient
-    (StubClient. (atom []))
-    (HttpClient. "http://localhost:8080/flurfunk-server")))
+  (if-let [server js/flurfunkServer]
+    (HttpClient. server)
+    (StubClient. (atom []))))
 
 (def ^{:private true} client (make-client))
 
