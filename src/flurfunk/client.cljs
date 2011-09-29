@@ -25,11 +25,10 @@
 (defn- get-request [uri callback]
   (XhrIo/send uri callback))
 
-(defn- wrap-context [uri]
-  (let [pathname (.pathname js/location)]
-    (str pathname
-         (if (not (= "/" (nth pathname (- 1 (.length pathname))))) "/")
-         uri)))
+(defn- make-uri [uri server]
+  (str server
+       (if (not (= "/" (nth server (- 1 (.length server))))) "/")
+       uri))
 
 (defn- unmarshal-messages [messages]
   (let [xml (xml/loadXml messages)
@@ -49,16 +48,17 @@
 (defn- marshal-message [message]
   (str "<message author='" (:author message) "'>" (:text message) "</message>"))
 
-(deftype HttpClient [] Client
+(deftype HttpClient [server] Client
   (client-get-messages
    [this callback]
    (client-get-messages this callback nil))
 
   (client-get-messages
    [this callback since]
-   (get-request (wrap-context (if (nil? since)
-                                "messages"
-                                (str "messages?since=" since)))
+   (get-request (make-uri (if (nil? since)
+                            "messages"
+                            (str "messages?since=" since))
+                          server)
                 (fn [e]
                   (let [target (.target e)
                         text (. target (getResponseText))]
@@ -66,13 +66,13 @@
 
   (client-send-message
    [this message callback]
-   (post-request (wrap-context "message")
+   (post-request (make-uri "message" server)
                  (fn [] (callback)) (marshal-message message))))
 
 (defn- make-client []
   (if js/flurfunkStubClient
     (StubClient. (atom []))
-    (HttpClient.)))
+    (HttpClient. "http://localhost:8080/flurfunk-server")))
 
 (def ^{:private true} client (make-client))
 
