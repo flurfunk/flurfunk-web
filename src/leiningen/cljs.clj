@@ -6,18 +6,15 @@
 
 (def resources-dir "resources/public")
 
-(defn- cmd [p] (.. Runtime getRuntime (exec (str p)))) 
-
-(defn- cmdout [o] 
-  (let [r (BufferedReader. 
-             (InputStreamReader. 
-               (.getInputStream o)))] 
-    (dorun (map println (line-seq r)))))
+(defn- process-io [process]
+  (let [reader (BufferedReader.
+                (InputStreamReader. (.getInputStream process)))]
+    (dorun (map println (line-seq reader)))))
 
 (defn- exec
   [command]
   (println "Executing:" command)
-  (cmdout (cmd command)))
+  (process-io (.. Runtime getRuntime (exec command))))
 
 (defn- cljsc
   [source-dir options]
