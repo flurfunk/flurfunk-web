@@ -26,15 +26,15 @@ Building and running
 
     lein cljs compile-dev
 
-And open _index-dev.html_ in a browser.
+And open _resources/public/index-dev.html_ in a browser.
 
 Creating a WAR
 --------------
 
     lein cljs war
 
-Deploying WAR to Nexus
-----------------------
+Deploying the WAR to Nexus
+--------------------------
 
 After completing the above step of creating a WAR, you can deploy it to Nexus
 like this:
