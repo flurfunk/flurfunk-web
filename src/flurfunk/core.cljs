@@ -43,7 +43,9 @@
 
 (defn- format-message-text [text]
   (let [trimmed-text (string/trim text)
-        paragraphs (vec (.split trimmed-text "\n\n"))
+        text-with-links (replace-all trimmed-text "(https?://\\S*)"
+                                     "<a href=\"$1\">$1</a>")
+        paragraphs (vec (.split text-with-links "\n\n"))
         text-with-paragraphs (map-str (fn [paragraph]
                                         (str "<p>" paragraph "</p>"))
                                       paragraphs)]
