@@ -4,9 +4,7 @@
             [goog.events :as events]
             [goog.string :as string]
             [goog.net.Cookies :as Cookies]
-            [goog.ui.Button :as Button]
-            [goog.ui.Container :as Container]
-            [goog.ui.Control :as Control]))
+            [goog.ui.Button :as Button]))
 
 (def ^{:private true} last-fetched nil)
 
@@ -20,7 +18,7 @@
                  [:input#author-name-input {:type "text"}]]
                 [:textarea#message-textarea]
                 [:button#send-button "Send message"]]
-               [:div#message-container]]]))
+               [:div#message-list]]]))
 
 (defn- leading-zero [number]
   (str (if (< number 10) "0") number))
@@ -51,23 +49,20 @@
                                       paragraphs)]
     (dom/html (replace-all text-with-paragraphs "\n" "<br/>"))))
 
-(defn- create-message-control [message]
-  (let [content (dom/build [:div
-                            [:span.author (:author message)]
-                            [:span.timestamp (format-timestamp
-                                              (:timestamp message))]
-                            [:div.text (format-message-text (:text message))]])
-        message-control (goog.ui/Control. content)]
-    (.setId message-control (str "message-" (:id message)))
-    message-control))
+(defn- create-message-element [message]
+  (dom/build [:div {:id (str "message-" (:id message))}
+              [:span.author (:author message)]
+              [:span.timestamp (format-timestamp
+                                (:timestamp message))]
+              [:div.text (format-message-text (:text message))]]))
 
-(defn- update-message-container [message-container]
+(defn- update-message-list [message-list]
   (let [callback (fn [messages]
                    (when (> (count messages) 0)
                      (def last-fetched (:timestamp (first messages)))
                      (doseq [message (reverse messages)]
-                       (.addChildAt message-container
-                                    (create-message-control message) 0 true))))]
+                       (dom/insert-at message-list
+                                      (create-message-element message) 0))))]
     (if (nil? last-fetched)
       (client/get-messages callback)
       (client/get-messages callback last-fetched))))
@@ -78,7 +73,7 @@
                        ["<" "&lt;"]
                        [">" "&gt;"]]))
 
-(defn- send-message [message-container send-button]
+(defn- send-message [message-list send-button]
   (let [message-textarea (dom/get-element :message-textarea)
         escaped-text (escape-html (.value message-textarea))]
     (.setEnabled send-button false)
@@ -88,7 +83,7 @@
      (fn []
        (set! (.value message-textarea) "")
        (. message-textarea (focus))
-       (update-message-container message-container)))))
+       (update-message-list message-list)))))
 
 (defn- update-send-button [send-button]
   (let [author (.value (dom/get-element :author-name-input))
@@ -109,12 +104,11 @@
 (defn -main []
   (dom/append document.body (create-dom))
   (let [send-button (goog.ui/Button. "Send message")
-        message-container (goog.ui/Container.)]
+        message-list (dom/get-element :message-list)]
     (.decorate send-button (dom/get-element :send-button))
     (.setEnabled send-button false)
     (events/listen send-button goog.ui.Component/EventType.ACTION
-                   (fn [e] (send-message message-container send-button)))
-    (.decorate message-container (dom/get-element :message-container))
+                   (fn [e] (send-message message-list send-button)))
     (let [author-name-input (dom/get-element :author-name-input)
           message-textarea (dom/get-element :message-textarea)]
       (events/listen author-name-input goog.events/EventType.INPUT
@@ -128,7 +122,7 @@
       (if (empty? (.value author-name-input))
         (. author-name-input (focus))
         (. message-textarea (focus))))
-    (js/setInterval (fn [] (update-message-container message-container)) 1000)
-    (update-message-container message-container)))
+    (js/setInterval (fn [] (update-message-list message-list)) 1000)
+    (update-message-list message-list)))
 
 (-main)

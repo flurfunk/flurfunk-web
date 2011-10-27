@@ -62,37 +62,37 @@ div#message-input button {
     margin-left: 0;
 }
 
-div#message-container {
+div#message-list {
     margin-top: 20px;
     font-size: 14px;
 }
 
-div#message-container>* {
+div#message-list>* {
     border-top: 1px solid #ddd;
     padding: 5px 10px;
 }
 
-div#message-container span.author {
+div#message-list span.author {
     font-weight: bold;
 }
 
-div#message-container span.timestamp {
+div#message-list span.timestamp {
     float: right;
     clear: right;
     font-size: 12px;
     font-style: italic;
 }
 
-div#message-container div.text {
+div#message-list div.text {
     padding: 5px;
 }
 
-div#message-container div.text p {
+div#message-list div.text p {
     margin-top: 10px;
     margin-bottom: 0;
 }
 
-div#message-container div.text p:first-child {
+div#message-list div.text p:first-child {
     margin-top: 0;
 }
 
