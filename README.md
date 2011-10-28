@@ -14,8 +14,9 @@ Installing Leiningen
 Installing ClojureScript
 ------------------------
 
-    git clone git://github.com/clojure/clojurescript.git
+    git clone git://github.com/viaboxxsystems/clojurescript.git
     cd clojurescript
+    git checkout kind-of-stable
     script/bootstrap
 
 Then make the `$CLOJURESCRIPT_HOME` variable point to the clojurescript
