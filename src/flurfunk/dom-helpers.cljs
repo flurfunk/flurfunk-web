@@ -8,12 +8,18 @@
 
 (ns flurfunk.dom-helpers
   (:require [clojure.string :as string]
-            [goog.dom :as dom]))
+            [goog.dom :as dom]
+            [goog.array :as array]))
 
 (defn get-element
   "Return the element with the passed id."
   [id]
   (dom/getElement (name id)))
+
+(defn get-children
+  [element]
+  "Return all child elements of parent"
+  (array/toArray (dom/getChildren element)))
 
 (defn append
   "Append all children to parent."

@@ -1,5 +1,5 @@
 (ns flurfunk.client
-  (:require [goog.dom :as dom]
+  (:require [flurfunk.dom-helpers :as dom]
             [goog.dom.xml :as xml]
             [goog.net.XhrIo :as XhrIo]))
 
@@ -32,7 +32,7 @@
 
 (defn- unmarshal-messages [messages]
   (let [xml (xml/loadXml messages)
-        message-tags (dom/getChildren (.firstChild xml))]
+        message-tags (dom/get-children (.firstChild xml))]
     (map (fn [message-tag]
            (let [text (.textContent message-tag)
                  id (. message-tag (getAttribute "id"))
