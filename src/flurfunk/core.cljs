@@ -84,8 +84,7 @@
       :text escaped-text}
      (fn []
        (set! (.value message-textarea) "")
-       (. message-textarea (focus))
-       (update-message-list message-list)))))
+       (. message-textarea (focus))))))
 
 (defn- update-send-button [send-button]
   (let [author (.value (dom/get-element :author-name-input))
