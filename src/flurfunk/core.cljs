@@ -54,8 +54,7 @@
 (defn- create-message-element [message]
   (dom/build [:div {:id (str "message-" (:id message))}
               [:span.author (:author message)]
-              [:span.timestamp (format-timestamp
-                                (:timestamp message))]
+              [:span.timestamp (format-timestamp (:timestamp message))]
               [:div.text (format-message-text (:text message))]]))
 
 (defn- update-message-list [message-list]
