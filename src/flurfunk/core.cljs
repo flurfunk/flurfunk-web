@@ -41,8 +41,15 @@
      (reduce (fn [string [from to]]
                (replace-all string from to)) string replacements)))
 
+(defn- escape-html [string]
+  (replace-all string [["&" "&amp;"]
+                       ["\"" "&quot;"]
+                       ["<" "&lt;"]
+                       [">" "&gt;"]]))
+
 (defn- format-message-text [text]
-  (let [trimmed-text (string/trim text)
+  (let [escaped-text (escape-html text)
+        trimmed-text (string/trim escaped-text)
         text-with-links (replace-all trimmed-text "(https?://\\S*)"
                                      "<a href=\"$1\">$1</a>")
         paragraphs (vec (.split text-with-links "\n\n"))
@@ -67,12 +74,6 @@
     (if (nil? last-fetched)
       (client/get-messages callback)
       (client/get-messages callback last-fetched))))
-
-(defn- escape-html [string]
-  (replace-all string [["&" "&amp;"]
-                       ["\"" "&quot;"]
-                       ["<" "&lt;"]
-                       [">" "&gt;"]]))
 
 (defn- send-message [message-list send-button]
   (let [message-textarea (dom/get-element :message-textarea)
