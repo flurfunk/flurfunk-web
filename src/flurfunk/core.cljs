@@ -66,11 +66,15 @@
 
 (defn- update-message-list [message-list]
   (let [callback (fn [messages]
-                   (when (> (count messages) 0)
-                     (def last-fetched (:timestamp (first messages)))
-                     (doseq [message (reverse messages)]
-                       (dom/insert-at message-list
-                                      (create-message-element message) 0))))]
+                   (if (> (count messages) 0)
+                     (let [latest-timestamp (:timestamp (first messages))]
+                       (when (or (nil? last-fetched)
+                                 (> latest-timestamp last-fetched))
+                         (def last-fetched latest-timestamp)
+                         (doseq [message (reverse messages)]
+                           (dom/insert-at
+                            message-list
+                            (create-message-element message) 0))))))]
     (if (nil? last-fetched)
       (client/get-messages callback)
       (client/get-messages callback last-fetched))))
