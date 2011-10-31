@@ -6,11 +6,14 @@
             [goog.net.Cookies :as Cookies]
             [goog.ui.Button :as Button]))
 
+(def ^{:private true} title "Flurfunk")
 (def ^{:private true} last-fetched nil)
+(def ^{:private true} active true)
+(def ^{:private true} unread-messages 0)
 
 (defn- create-dom []
   (dom/build [:div#content
-              [:h1 "Flurfunk"]
+              [:h1 title]
               [:div#messages
                [:div#message-input
                 [:div
@@ -64,17 +67,29 @@
               [:span.timestamp (format-timestamp (:timestamp message))]
               [:div.text (format-message-text (:text message))]]))
 
+(defn- update-title []
+  (set! (.title js/document) (str (if (> unread-messages 0)
+                                    (str "(" unread-messages ") "))
+                                  title)))
+
+(defn- add-to-unread [message-count]
+  (def unread-messages (+ unread-messages message-count)))
+
 (defn- update-message-list [message-list]
   (let [callback (fn [messages]
-                   (if (> (count messages) 0)
-                     (let [latest-timestamp (:timestamp (first messages))]
-                       (when (or (nil? last-fetched)
-                                 (> latest-timestamp last-fetched))
-                         (def last-fetched latest-timestamp)
-                         (doseq [message (reverse messages)]
-                           (dom/insert-at
-                            message-list
-                            (create-message-element message) 0))))))]
+                   (let [message-count (count messages)]
+                     (if (> message-count 0)
+                       (let [latest-timestamp (:timestamp (first messages))]
+                         (when (or (nil? last-fetched)
+                                   (> latest-timestamp last-fetched))
+                           (def last-fetched latest-timestamp)
+                           (doseq [message (reverse messages)]
+                             (dom/insert-at
+                              message-list
+                              (create-message-element message) 0))
+                           (when (not active)
+                             (add-to-unread message-count)
+                             (update-title)))))))]
     (if (nil? last-fetched)
       (client/get-messages callback)
       (client/get-messages callback last-fetched))))
@@ -129,6 +144,11 @@
         (. author-name-input (focus))
         (. message-textarea (focus))))
     (js/setInterval (fn [] (update-message-list message-list)) 1000)
-    (update-message-list message-list)))
+    (update-message-list message-list)
+    (set! (.onfocus js/window) (fn []
+                                 (def active true)
+                                 (def unread-messages 0)
+                                 (update-title)))
+    (set! (.onblur js/window) (fn [] (def active false)))))
 
 (-main)
