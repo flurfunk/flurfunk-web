@@ -11,17 +11,6 @@ Installing Leiningen
     chmod +x lein
     mv lein ~/bin/ # Make sure that ~/bin/ exists and is on the $PATH
 
-Installing ClojureScript
-------------------------
-
-    git clone git://github.com/viaboxxsystems/clojurescript.git
-    cd clojurescript
-    git checkout kind-of-stable
-    script/bootstrap
-
-Then make the `$CLOJURESCRIPT_HOME` variable point to the clojurescript
-directory.
-
 Building and running
 --------------------
 

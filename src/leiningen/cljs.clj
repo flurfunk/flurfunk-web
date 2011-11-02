@@ -1,6 +1,7 @@
 (ns leiningen.cljs
   (:refer-clojure :exclude [compile])
-  (:use [leiningen.help :only (help-for)])
+  (:use [leiningen.help :only (help-for)]
+        [leiningen.compile :only (eval-in-project)])
   (:import (java.io BufferedReader InputStreamReader)
            java.io.File))
 
@@ -17,22 +18,25 @@
   (process-io (.. Runtime getRuntime (exec command))))
 
 (defn- cljsc
-  [source-dir options]
-  (let [clojurescript-home (get (System/getenv) "CLOJURESCRIPT_HOME")]
-    (exec (str clojurescript-home "/bin/cljsc " source-dir
-               (if options (str " " options))))))
+  [project options]
+  (println "Compiling ClojureScript ...")
+  (eval-in-project (dissoc project :source-path)
+                   `(cljsc/build ~(:source-path project) ~options)
+                   nil nil
+                   '(require '[cljs.closure :as cljsc])))
 
 (defn- compile
   "Compiles ClojureScript to JavaScript"
   [project]
-  (cljsc "src" (str "{:output-to \"" resources-dir "/" (:name project)
-                    ".js\" :optimizations :advanced}")))
+  (cljsc project {:output-to (str resources-dir "/" (:name project) ".js")
+                  :optimizations :advanced}))
 
 (defn- compile-dev
   "Compiles ClojureScript to JavaScript, without optimizations"
   [project]
-  (cljsc "src" (str "{:output-dir \"out-dev\" :output-to \"" resources-dir "/"
-                    (:name project) "-dev.js\" :pretty-print true}")))
+  (cljsc project {:output-dir "out-dev"
+                  :output-to (str resources-dir "/" (:name project) "-dev.js")
+                  :pretty-print true}))
 
 (defn- war
   "Bundles the generated JavaScript and other resources in a WAR"
