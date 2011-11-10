@@ -68,8 +68,16 @@ div#message-list {
 }
 
 div#message-list>* {
-    border-top: 1px solid #ddd;
+    border-bottom: 1px solid #ddd;
     padding: 5px 10px;
+}
+
+div#message-list>*:first-child {
+    border-top: 1px solid #ddd;
+}
+
+div#message-list>*.first-unread {
+    border-bottom: 1px solid #888;
 }
 
 div#message-list span.author {

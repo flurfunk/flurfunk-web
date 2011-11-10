@@ -61,19 +61,38 @@
                                       paragraphs)]
     (dom/html (replace-all text-with-paragraphs "\n" "<br/>"))))
 
-(defn- create-message-element [message]
-  (dom/build [:div {:id (str "message-" (:id message))}
-              [:span.author (:author message)]
-              [:span.timestamp (format-timestamp (:timestamp message))]
-              [:div.text (format-message-text (:text message))]]))
+(defn- create-message-element
+  ([message]
+     (create-message-element message false))
+  ([message first-unread]
+     (dom/build [:div {:id (str "message-" (:id message))
+                       :class (if first-unread "first-unread")}
+                 [:span.author (:author message)]
+                 [:span.timestamp (format-timestamp (:timestamp message))]
+                 [:div.text (format-message-text (:text message))]])))
+
+(defn- append-message
+  ([message-list message]
+     (append-message message-list message false))
+  ([message-list message first-unread]
+     (dom/insert-at
+      message-list
+      (create-message-element message first-unread) 0)))
+
+(defn- append-messages [message-list messages]
+  (let [reversed-messages (reverse messages)]
+    (append-message message-list (first reversed-messages)
+                    (and (not active) (= unread-messages 0)))
+    (doseq [message (rest reversed-messages)]
+      (append-message message-list message))))
+
+(defn- add-to-unread [message-count]
+  (def unread-messages (+ unread-messages message-count)))
 
 (defn- update-title []
   (set! (.title js/document) (str (if (> unread-messages 0)
                                     (str "(" unread-messages ") "))
                                   title)))
-
-(defn- add-to-unread [message-count]
-  (def unread-messages (+ unread-messages message-count)))
 
 (defn- update-message-list [message-list]
   (let [callback (fn [messages]
@@ -83,10 +102,7 @@
                          (when (or (nil? last-fetched)
                                    (> latest-timestamp last-fetched))
                            (def last-fetched latest-timestamp)
-                           (doseq [message (reverse messages)]
-                             (dom/insert-at
-                              message-list
-                              (create-message-element message) 0))
+                           (append-messages message-list messages)
                            (when (not active)
                              (add-to-unread message-count)
                              (update-title)))))))]
