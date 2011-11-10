@@ -1,6 +1,7 @@
 (ns flurfunk.core
   (:require [flurfunk.client :as client]
             [flurfunk.dom-helpers :as dom]
+            [goog.dom.classes :as classes]
             [goog.events :as events]
             [goog.string :as string]
             [goog.net.Cookies :as Cookies]
@@ -80,9 +81,14 @@
       (create-message-element message first-unread) 0)))
 
 (defn- append-messages [message-list messages]
-  (let [reversed-messages (reverse messages)]
+  (let [reversed-messages (reverse messages)
+        first-unread (and (not active) (= unread-messages 0))]
+    (when first-unread
+      (doseq [unread-message-div
+              (dom/query-elements "div#message-list>*.first-unread")]
+        (classes/remove unread-message-div "first-unread")))
     (append-message message-list (first reversed-messages)
-                    (and (not active) (= unread-messages 0)))
+                    first-unread)
     (doseq [message (rest reversed-messages)]
       (append-message message-list message))))
 

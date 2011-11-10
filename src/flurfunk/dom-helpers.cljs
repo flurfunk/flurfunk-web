@@ -16,6 +16,11 @@
   [id]
   (dom/getElement (name id)))
 
+(defn query-elements
+  "Return all elements matching the supplied selector."
+  [selector]
+  (array/toArray (. js/document (querySelectorAll selector))))
+
 (defn get-children
   [element]
   "Return all child elements of parent"
