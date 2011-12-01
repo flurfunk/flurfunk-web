@@ -128,9 +128,13 @@
        (. message-textarea (focus))
        (update-message-list message-list)))))
 
+(defn- trim [s]
+  (replace-all s [["^\\s+" ""]
+                  ["\\s+$" ""]]))
+
 (defn- update-send-button [send-button]
-  (let [author (.value (dom/get-element :author-name-input))
-        text (.value (dom/get-element :message-textarea))]
+  (let [author (trim (.value (dom/get-element :author-name-input)))
+        text (trim (.value (dom/get-element :message-textarea)))]
     (.setEnabled send-button (not (or (empty? author)
                                       (empty? text))))))
 
