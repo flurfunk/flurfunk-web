@@ -56,14 +56,20 @@ div#message-input {
     width: 560px;
     margin-left: auto;
     margin-right: auto;
+    margin-bottom: 10px;
 }
 
 div#message-input button {
     margin-left: 0;
 }
 
+div#waiting-indication {
+    color: #555;
+    padding-left: 10px;
+}
+
 div#message-list {
-    margin-top: 20px;
+    margin-top: 10px;
     font-size: 14px;
 }
 

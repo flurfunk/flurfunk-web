@@ -4,6 +4,7 @@
             [goog.dom.classes :as classes]
             [goog.events :as events]
             [goog.string :as string]
+            [goog.style :as style]
             [goog.net.Cookies :as Cookies]
             [goog.ui.Button :as Button]))
 
@@ -22,6 +23,7 @@
                  [:input#author-name-input {:type "text"}]]
                 [:textarea#message-textarea]
                 [:button#send-button "Send message"]]
+               [:div#waiting-indication "Fetching messages ..."]
                [:div#message-list]]]))
 
 (defn- leading-zero [number]
@@ -101,7 +103,8 @@
                                   title)))
 
 (defn- update-message-list [message-list]
-  (let [callback (fn [messages]
+  (let [waiting-indication (dom/get-element :waiting-indication)
+        callback (fn [messages]
                    (let [message-count (count messages)]
                      (if (> message-count 0)
                        (let [latest-timestamp (:timestamp (first messages))]
@@ -111,7 +114,9 @@
                            (append-messages message-list messages)
                            (when (not active)
                              (add-to-unread message-count)
-                             (update-title)))))))]
+                             (update-title)))))
+                     (style/showElement waiting-indication false)))]
+    (style/showElement waiting-indication true)
     (if (nil? last-fetched)
       (client/get-messages callback)
       (client/get-messages callback last-fetched))))
@@ -165,7 +170,7 @@
       (if (empty? (.value author-name-input))
         (. author-name-input (focus))
         (. message-textarea (focus))))
-    (js/setInterval (fn [] (update-message-list message-list)) 1000)
+    ;; (js/setInterval (fn [] (update-message-list message-list)) 1000)
     (update-message-list message-list)
     (set! (.onfocus js/window) (fn []
                                  (def active true)
