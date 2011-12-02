@@ -64,8 +64,13 @@ div#message-input button {
 }
 
 div#waiting-indication {
-    color: #555;
-    padding-left: 10px;
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+    position: relative;
+    left: 450px;
+    top: 5px;
+    background: url("waiting-indication.gif") center no-repeat;
 }
 
 div#message-list {

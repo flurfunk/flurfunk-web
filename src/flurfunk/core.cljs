@@ -22,8 +22,8 @@
                  [:label "Your name:"]
                  [:input#author-name-input {:type "text"}]]
                 [:textarea#message-textarea]
-                [:button#send-button "Send message"]]
-               [:div#waiting-indication "Fetching messages ..."]
+                [:button#send-button "Send message"]
+                [:div#waiting-indication]]
                [:div#message-list]]]))
 
 (defn- leading-zero [number]
