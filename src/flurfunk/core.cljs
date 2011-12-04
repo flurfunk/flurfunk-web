@@ -170,7 +170,7 @@
       (if (empty? (.value author-name-input))
         (. author-name-input (focus))
         (. message-textarea (focus))))
-    ;; (js/setInterval (fn [] (update-message-list message-list)) 1000)
+    (js/setInterval (fn [] (update-message-list message-list)) 1000)
     (update-message-list message-list)
     (set! (.onfocus js/window) (fn []
                                  (def active true)
