@@ -3,6 +3,7 @@
             [flurfunk.dom-helpers :as dom]
             [goog.dom.classes :as classes]
             [goog.events :as events]
+            [goog.fx.dom :as fx-dom]
             [goog.string :as string]
             [goog.style :as style]
             [goog.net.Cookies :as Cookies]
@@ -75,24 +76,27 @@
                  [:div.text (format-message-text (:text message))]])))
 
 (defn- append-message
-  ([message-list message]
-     (append-message message-list message false))
-  ([message-list message first-unread]
-     (dom/insert-at
-      message-list
-      (create-message-element message first-unread) 0)))
+  ([message-list message flags]
+     (let [message-element (create-message-element
+                            message (contains? flags :first-unread))]
+       (dom/insert-at message-list message-element 0)
+       (if (contains? flags :animate)
+         (. (fx-dom/ResizeHeight. message-element 0
+                                  (.offsetHeight message-element) 500)
+            (play))))))
 
 (defn- append-messages [message-list messages]
   (let [reversed-messages (reverse messages)
-        first-unread (and (not active) (= unread-messages 0))]
+        first-unread (and (not active) (= unread-messages 0))
+        flags (conj #{} (if (= (count messages) 1) :animate))]
     (when first-unread
       (doseq [unread-message-div
               (dom/query-elements "div#message-list>*.first-unread")]
         (classes/remove unread-message-div "first-unread")))
     (append-message message-list (first reversed-messages)
-                    first-unread)
+                    (conj flags (if first-unread :first-unread)))
     (doseq [message (rest reversed-messages)]
-      (append-message message-list message))))
+      (append-message message-list message flags))))
 
 (defn- add-to-unread [message-count]
   (def unread-messages (+ unread-messages message-count)))

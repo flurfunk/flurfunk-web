@@ -81,6 +81,7 @@ div#message-list {
 div#message-list>* {
     border-bottom: 1px solid #ddd;
     padding: 5px 10px;
+    overflow: hidden;
 }
 
 div#message-list>*:first-child {
