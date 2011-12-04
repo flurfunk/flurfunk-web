@@ -141,6 +141,16 @@
       (client/get-messages callback)
       (client/get-messages callback last-fetched))))
 
+(defn- animate-element-height [element new-height]
+  (. (fx-dom/ResizeHeight. element (.offsetHeight element) new-height 100)
+     (play)))
+
+(defn- begin-composing [message-textarea]
+  (animate-element-height message-textarea 90))
+
+(defn- end-composing [message-textarea]
+  (animate-element-height message-textarea 30))
+
 (defn- send-message [message-list send-button]
   (let [message-textarea (dom/get-element :message-textarea)
         escaped-text (escape-html (.value message-textarea))]
@@ -150,7 +160,7 @@
       :text escaped-text}
      (fn []
        (set! (.value message-textarea) "")
-       (. message-textarea (focus))
+       (end-composing message-textarea)
        (update-message-list message-list)))))
 
 (defn- update-send-button [send-button]
@@ -185,6 +195,13 @@
                        (update-send-button send-button)))
       (events/listen message-textarea goog.events/EventType.INPUT
                      (fn [e] (update-send-button send-button)))
+      (events/listen message-textarea goog.events/EventType.FOCUS
+                     (fn [e]
+                       (begin-composing message-textarea)))
+      (events/listen message-textarea goog.events/EventType.BLUR
+                     (fn [e]
+                       (if (empty? (.value message-textarea))
+                         (end-composing message-textarea))))
       (if-let [author (get-author-cookie)]
         (set! (.value author-name-input) author))
       (if (empty? (.value author-name-input))
