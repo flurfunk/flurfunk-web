@@ -106,8 +106,23 @@
                                     (str "(" unread-messages ") "))
                                   title)))
 
-(defn- update-message-list [message-list]
+(defn- fade-waiting-indication [fade-in]
   (let [waiting-indication (dom/get-element :waiting-indication)
+        is-shown (style/isElementShown waiting-indication)]
+    (if (or (and fade-in (not is-shown))
+            (and (not fade-in) is-shown))
+      (. (new (if fade-in fx-dom/FadeInAndShow fx-dom/FadeOutAndHide)
+              waiting-indication 500)
+         (play)))))
+
+(defn- show-waiting-indication []
+  (fade-waiting-indication true))
+
+(defn- hide-waiting-indication []
+  (fade-waiting-indication false))
+
+(defn- update-message-list [message-list]
+  (let [waiting (atom true)
         callback (fn [messages]
                    (let [message-count (count messages)]
                      (if (> message-count 0)
@@ -119,8 +134,9 @@
                            (when (not active)
                              (add-to-unread message-count)
                              (update-title)))))
-                     (style/showElement waiting-indication false)))]
-    (style/showElement waiting-indication true)
+                     (hide-waiting-indication)
+                     (compare-and-set! waiting true false)))]
+    (js/setTimeout (fn [] (if @waiting (show-waiting-indication))) 500)
     (if (nil? last-fetched)
       (client/get-messages callback)
       (client/get-messages callback last-fetched))))
