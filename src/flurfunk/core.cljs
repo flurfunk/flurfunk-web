@@ -205,8 +205,7 @@
       (if-let [author (get-author-cookie)]
         (set! (.value author-name-input) author))
       (if (empty? (.value author-name-input))
-        (. author-name-input (focus))
-        (. message-textarea (focus))))
+        (. author-name-input (focus))))
     (js/setInterval (fn [] (update-message-list message-list)) 1000)
     (update-message-list message-list)
     (set! (.onfocus js/window) (fn []
