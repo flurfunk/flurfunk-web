@@ -205,13 +205,16 @@
       (if-let [author (get-author-cookie)]
         (set! (.value author-name-input) author))
       (if (empty? (.value author-name-input))
-        (. author-name-input (focus))))
-    (js/setInterval (fn [] (update-message-list message-list)) 1000)
-    (update-message-list message-list)
-    (set! (.onfocus js/window) (fn []
-                                 (def active true)
-                                 (def unread-messages 0)
-                                 (update-title)))
-    (set! (.onblur js/window) (fn [] (def active false)))))
+        (. author-name-input (focus)))
+      (js/setInterval (fn [] (update-message-list message-list)) 1000)
+      (update-message-list message-list)
+      (set! (.onfocus js/window) (fn []
+                                   (def active true)
+                                   (def unread-messages 0)
+                                   (update-title)))
+      (set! (.onblur js/window) (fn []
+                                  (def active false)
+                                  (if (empty? (.value message-textarea))
+                                    (. message-textarea (blur))))))))
 
 (-main)
