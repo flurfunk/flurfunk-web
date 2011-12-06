@@ -96,9 +96,6 @@
     (doseq [message (rest reversed-messages)]
       (append-message message-list message flags))))
 
-(defn- add-to-unread [message-count]
-  (def unread-messages (+ unread-messages message-count)))
-
 (defn- update-title []
   (set! (.title js/document) (str (if (> unread-messages 0)
                                     (str "(" unread-messages ") "))
@@ -130,7 +127,8 @@
                            (def last-fetched latest-timestamp)
                            (append-messages message-list messages)
                            (when (not active)
-                             (add-to-unread message-count)
+                             (def unread-messages (+ unread-messages
+                                                     message-count))
                              (update-title)))))
                      (hide-waiting-indication)
                      (compare-and-set! waiting true false)))]
