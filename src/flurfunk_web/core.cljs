@@ -60,9 +60,7 @@
         text-with-links (replace-all trimmed-text "(https?://\\S*)"
                                      "<a href=\"$1\" target=\"_blank\">$1</a>")
         paragraphs (vec (.split text-with-links "\n\n"))
-        text-with-paragraphs (map-str (fn [paragraph]
-                                        (str "<p>" paragraph "</p>"))
-                                      paragraphs)]
+        text-with-paragraphs (map-str #(str "<p>" % "</p>") paragraphs)]
     (dom/html (replace-all text-with-paragraphs "\n" "<br/>"))))
 
 (defn- create-message-element
@@ -186,7 +184,7 @@
     (.decorate send-button (dom/get-element :send-button))
     (.setEnabled send-button false)
     (events/listen send-button goog.ui.Component/EventType.ACTION
-                   (fn [e] (send-message message-list send-button)))
+                   #(send-message message-list send-button))
     (let [author-name-input (dom/get-element :author-name-input)
           message-textarea (dom/get-element :message-textarea)]
       (events/listen author-name-input goog.events/EventType.INPUT
@@ -194,10 +192,9 @@
                        (set-author-cookie (.value author-name-input))
                        (update-send-button send-button)))
       (events/listen message-textarea goog.events/EventType.INPUT
-                     (fn [e] (update-send-button send-button)))
+                     #(update-send-button send-button))
       (events/listen message-textarea goog.events/EventType.FOCUS
-                     (fn [e]
-                       (begin-composing message-textarea)))
+                     #(begin-composing message-textarea))
       (events/listen message-textarea goog.events/EventType.BLUR
                      (fn [e]
                        (if (empty? (.value message-textarea))
@@ -206,7 +203,7 @@
         (set! (.value author-name-input) author))
       (if (empty? (.value author-name-input))
         (. author-name-input (focus)))
-      (js/setInterval (fn [] (update-message-list message-list)) 1000)
+      (js/setInterval #(update-message-list message-list) 1000)
       (update-message-list message-list)
       (set! (.onfocus js/window) (fn []
                                    (def active true)
