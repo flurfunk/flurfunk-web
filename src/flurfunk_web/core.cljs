@@ -110,11 +110,18 @@
               waiting-indication 500)
          (play)))))
 
-(defn- show-waiting-indication []
-  (fade-waiting-indication true))
+(defn- show-waiting-indication
+  ([] (show-waiting-indication true))
+  ([show] (let [waiting-indication (dom/get-element :waiting-indication)
+                is-shown (style/isElementShown waiting-indication)]
+            (if (or (and show (not is-shown))
+                    (and (not show) is-shown))
+              (. (new (if show fx-dom/FadeInAndShow fx-dom/FadeOutAndHide)
+                      waiting-indication 500)
+                 (play))))))
 
 (defn- hide-waiting-indication []
-  (fade-waiting-indication false))
+  (show-waiting-indication false))
 
 (defn- update-message-list [message-list]
   (let [waiting (atom true)
