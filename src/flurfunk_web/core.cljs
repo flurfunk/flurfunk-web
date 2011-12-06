@@ -177,41 +177,47 @@
   (let [cookies (goog.net/Cookies. js/document)]
     (.get cookies "author")))
 
+(defn- prepare-elements [author-name-input message-textarea send-button
+                         message-list]
+  (let [send-button-widget (goog.ui/Button. "Send message")]
+    (.decorate send-button-widget send-button)
+    (.setEnabled send-button-widget false)
+    (events/listen send-button-widget goog.ui.Component/EventType.ACTION
+                   #(send-message message-list send-button-widget))
+    (events/listen author-name-input goog.events/EventType.INPUT
+                   (fn [e]
+                     (set-author-cookie (.value author-name-input))
+                     (update-send-button send-button-widget)))
+    (events/listen message-textarea goog.events/EventType.INPUT
+                   #(update-send-button send-button-widget))
+    (events/listen message-textarea goog.events/EventType.FOCUS
+                   #(begin-composing message-textarea))
+    (events/listen message-textarea goog.events/EventType.BLUR
+                   (fn [e]
+                     (if (empty? (.value message-textarea))
+                       (end-composing message-textarea))))))
+
 (defn -main []
   (dom/append document.body (create-dom))
-  (let [send-button (goog.ui/Button. "Send message")
+  (let [author-name-input (dom/get-element :author-name-input)
+        message-textarea (dom/get-element :message-textarea)
+        send-button (dom/get-element :send-button)
         message-list (dom/get-element :message-list)]
-    (.decorate send-button (dom/get-element :send-button))
-    (.setEnabled send-button false)
-    (events/listen send-button goog.ui.Component/EventType.ACTION
-                   #(send-message message-list send-button))
-    (let [author-name-input (dom/get-element :author-name-input)
-          message-textarea (dom/get-element :message-textarea)]
-      (events/listen author-name-input goog.events/EventType.INPUT
-                     (fn [e]
-                       (set-author-cookie (.value author-name-input))
-                       (update-send-button send-button)))
-      (events/listen message-textarea goog.events/EventType.INPUT
-                     #(update-send-button send-button))
-      (events/listen message-textarea goog.events/EventType.FOCUS
-                     #(begin-composing message-textarea))
-      (events/listen message-textarea goog.events/EventType.BLUR
-                     (fn [e]
-                       (if (empty? (.value message-textarea))
-                         (end-composing message-textarea))))
-      (if-let [author (get-author-cookie)]
-        (set! (.value author-name-input) author))
-      (if (empty? (.value author-name-input))
-        (. author-name-input (focus)))
-      (js/setInterval #(update-message-list message-list) 1000)
-      (update-message-list message-list)
-      (set! (.onfocus js/window) (fn []
-                                   (def active true)
-                                   (def unread-messages 0)
-                                   (update-title)))
-      (set! (.onblur js/window) (fn []
-                                  (def active false)
-                                  (if (empty? (.value message-textarea))
-                                    (. message-textarea (blur))))))))
+    (prepare-elements author-name-input message-textarea send-button
+                      message-list)
+    (if-let [author (get-author-cookie)]
+      (set! (.value author-name-input) author))
+    (if (empty? (.value author-name-input))
+      (. author-name-input (focus)))
+    (js/setInterval #(update-message-list message-list) 1000)
+    (update-message-list message-list)
+    (set! (.onfocus js/window) (fn []
+                                 (def active true)
+                                 (def unread-messages 0)
+                                 (update-title)))
+    (set! (.onblur js/window) (fn []
+                                (def active false)
+                                (if (empty? (.value message-textarea))
+                                  (. message-textarea (blur)))))))
 
 (-main)
