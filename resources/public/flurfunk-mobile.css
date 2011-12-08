@@ -1,3 +1,52 @@
+html {
+    background-color: #fff;
+}
+
 body, div#content {
-    width: 320px;
+    width: 100%;
+    margin: 0;
+}
+
+div#messages {
+    border: none;
+}
+
+div#messages {
+    padding-top: 0;
+}
+
+h1 {
+    font-size: 2.5em;
+}
+
+label {
+    font-size: 1em;
+}
+
+input[type="text"], textarea, div#message-list div.text {
+    font-size: 1.1em;
+}
+
+input[type="text"] {
+    width: 8em;
+}
+
+textarea {
+    height: 4em;
+}
+
+div#message-input {
+    width: 100%;
+}
+
+button {
+    font-size: 1.1em;
+}
+
+div#message-list span.author {
+    font-size: 1.2em;
+}
+
+div#message-list span.timestamp {
+    font-size: 1.0em;
 }
