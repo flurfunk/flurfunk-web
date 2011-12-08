@@ -31,16 +31,18 @@ input[type="text"] {
     width: 8em;
 }
 
-textarea {
-    height: 4em;
-}
-
 div#message-input {
-    width: 100%;
+    width: 96%;
+    margin: 0 2%
 }
 
 button {
     font-size: 1.1em;
+    padding: 10px;
+}
+
+div#waiting-indication {
+    position: static;
 }
 
 div#message-list span.author {
