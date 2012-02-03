@@ -44,7 +44,8 @@
   [project]
   (let [project-name (:name project)]
     (exec (str "rm -rf " project-name ".war " resources-dir "/" project-name
-               ".js " resources-dir "/" project-name "-dev.js out out-dev"))))
+               ".js " resources-dir "/" project-name "-dev.js " resources-dir
+               "/out " resources-dir "/out-dev"))))
 
 (defn cljs
   "Work with ClojureScript"
