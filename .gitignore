@@ -1,8 +1,8 @@
 /resources/public/flurfunk-web.js
 /resources/public/flurfunk-web-dev.js
+/resources/public/out
+/resources/public/out-dev
 /flurfunk-web.war
-/out
-/out-dev
 /temp
 /lib
 /.dir-locals.el

@@ -20,21 +20,22 @@
 (defn- cljsc
   [project options]
   (println "Compiling ClojureScript ...")
-  (eval-in-project (dissoc project :source-path)
-                   `(cljsc/build ~(:source-path project) ~options)
+  (eval-in-project (dissoc project :cljs-source-path)
+                   `(cljsc/build ~(:cljs-source-path project) ~options)
                    nil nil
                    '(require '[cljs.closure :as cljsc])))
 
 (defn- compile
   "Compiles ClojureScript to JavaScript"
   [project]
-  (cljsc project {:output-to (str resources-dir "/" (:name project) ".js")
+  (cljsc project {:output-dir (str resources-dir "/out")
+                  :output-to (str resources-dir "/" (:name project) ".js")
                   :optimizations :advanced}))
 
 (defn- compile-dev
   "Compiles ClojureScript to JavaScript, without optimizations"
   [project]
-  (cljsc project {:output-dir "out-dev"
+  (cljsc project {:output-dir (str resources-dir "/out-dev")
                   :output-to (str resources-dir "/" (:name project) "-dev.js")
                   :pretty-print true}))
 

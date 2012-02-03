@@ -14,9 +14,17 @@ Installing Leiningen
 Building and running
 --------------------
 
-    lein cljs compile-dev
+### Development mode ###
 
-And open _resources/public/index-dev.html_ in a browser.
+    lein cljs compile-dev
+    lein ring server-headless
+    
+Then go to http://localhost:3000/index-dev.html.
+
+### Production mode ###
+
+    lein cljs compile
+    lein ring server
 
 Creating a WAR
 --------------
@@ -26,8 +34,7 @@ Creating a WAR
 Deploying the WAR to Nexus
 --------------------------
 
-After completing the above step of creating a WAR, you can deploy it to Nexus
-like this:
+After creating a WAR, you can deploy it to Nexus like this:
 
     lein pom temp/pom.xml
 
