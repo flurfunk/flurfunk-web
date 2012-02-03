@@ -29,7 +29,8 @@ Then go to http://localhost:3000/index-dev.html.
 Creating a WAR
 --------------
 
-    lein cljs war
+    mkdir temp
+    lein ring uberwar temp/flurfunk-web.war
 
 Deploying the WAR to Nexus
 --------------------------
