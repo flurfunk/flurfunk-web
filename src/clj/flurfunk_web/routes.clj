@@ -3,13 +3,11 @@
   (:use compojure.core
         ring.util.servlet)
   (:require [compojure.route :as route]
-            [compojure.handler :as handler]))
+            [compojure.handler :as handler]
+            [ring.util.response :as response]))
 
 (defroutes main-routes
-  (GET "/" {uri :uri}
-       {:status 302 :headers {"Location" (str uri
-                                              (if (not (.endsWith uri "/")) "/")
-                                              "index.html")}})
+  (GET "/" [] (response/resource-response "index.html" {:root "public"}))
   (route/resources "/")
   (route/not-found "Page not found"))
 
