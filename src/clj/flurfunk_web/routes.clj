@@ -6,8 +6,12 @@
             [ring.util.response :as response]))
 
 (defroutes main-routes
-  (GET "/" [] (response/content-type
-               (response/resource-response "public/index.html") "text/html"))
+  (GET "/" {uri :uri
+            request :servlet-context}
+       (if (and request (= uri (.getContextPath request)))
+         (response/redirect (str uri "/"))
+         (response/content-type
+          (response/resource-response "public/index.html") "text/html")))
   (route/resources "/")
   (route/not-found "Page not found"))
 
