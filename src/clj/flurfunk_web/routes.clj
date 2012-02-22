@@ -15,5 +15,5 @@
   (route/resources "/")
   (route/not-found "Page not found"))
 
-(def app
+(def flurfunk-web
      (handler/site main-routes))
