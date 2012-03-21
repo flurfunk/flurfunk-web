@@ -7,8 +7,8 @@
                  [compojure/compojure "0.6.5"]
                  [ring/ring-jetty-adapter "0.3.11"]]
   :dev-dependencies [[lein-ring "0.4.5"]]
-  :ring {:handler flurfunk-web.routes/flurfunk-web}
-  :main flurfunk-web.jetty
+  :ring {:handler flurfunk.web.routes/flurfunk-web}
+  :main flurfunk.web.jetty
   :repositories
   {"releases"
    {:url "https://www.viaboxxsystems.de/nexus/content/groups/public/"}

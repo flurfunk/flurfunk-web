@@ -1,6 +1,6 @@
-(ns flurfunk-web.core
-  (:require [flurfunk-web.client :as client]
-            [flurfunk-web.dom-helpers :as dom]
+(ns flurfunk.web.core
+  (:require [flurfunk.web.client :as client]
+            [flurfunk.web.dom-helpers :as dom]
             [goog.dom.classes :as classes]
             [goog.events :as events]
             [goog.fx.dom :as fx-dom]

@@ -6,7 +6,7 @@
 ;   the terms of this license.
 ;   You must not remove this notice, or any other, from this software.
 
-(ns flurfunk-web.dom-helpers
+(ns flurfunk.web.dom-helpers
   (:require [clojure.string :as string]
             [goog.dom :as dom]
             [goog.array :as array]))

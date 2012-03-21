@@ -1,5 +1,5 @@
-(ns flurfunk-web.client
-  (:require [flurfunk-web.dom-helpers :as dom]
+(ns flurfunk.web.client
+  (:require [flurfunk.web.dom-helpers :as dom]
             [goog.dom.xml :as xml]
             [goog.net.XhrIo :as XhrIo]))
 

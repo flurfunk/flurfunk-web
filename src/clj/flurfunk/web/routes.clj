@@ -1,4 +1,4 @@
-(ns flurfunk-web.routes
+(ns flurfunk.web.routes
   (:use compojure.core
         ring.util.servlet)
   (:require [compojure.route :as route]
