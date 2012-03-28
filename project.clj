@@ -3,7 +3,7 @@
   :source-path "src/clj"
   :cljs-source-path "src/cljs"
   :dependencies [[org.clojure/clojure "1.3.0"]
-                 [lein-clojurescript "1.0.0-SNAPSHOT"]
+                 [org.clojure/clojurescript "0.0-993"]
                  [compojure/compojure "0.6.5"]
                  [ring/ring-jetty-adapter "0.3.11"]]
   :dev-dependencies [[lein-ring "0.4.5"]]
