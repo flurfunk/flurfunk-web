@@ -36,8 +36,6 @@
         </form>
         <hr/>
 
-        <script src="out-dev/goog/base.js"></script>
-        <script src="flurfunk-web-dev.js"></script>
         <script>
             function getParameter(name) {
                 var parameters = location.hash.substring(1).split("&");
@@ -56,8 +54,7 @@
                 document.getElementById("use-real-server").checked = true;
             } else
                 enableUrlInput(false);
-
-            goog.require("flurfunk.web.core");
         </script>
+        <script src="flurfunk-web-dev.js"></script>
     </body>
 </html>
