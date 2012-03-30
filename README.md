@@ -16,14 +16,14 @@ Building and running
 
 ### Development mode ###
 
-    lein cljs compile-dev
+    lein cljsbuild auto
     lein ring server-headless
     
 Then go to http://localhost:3000/index-dev.html.
 
 ### Production mode ###
 
-    lein cljs compile
+    lein cljsbuild once
     lein ring server
 
 Creating a WAR
