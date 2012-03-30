@@ -32,6 +32,7 @@ var flurfunkServer = location.href.replace(\"index.html\", \"\")
     [:label {:for "server-url"} "URL:"]
     [:input {:id "server-url" :type "text"}]
     [:button {:onclick "reloadPage()"} "Reload"]]
+   [:hr]
    (include-js "out-dev/goog/base.js")
    (include-js "flurfunk-web-dev.js")
    [:script "
