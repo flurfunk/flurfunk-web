@@ -6,6 +6,7 @@
 /resources/public/out-dev
 /temp
 /.dir-locals.el
+/.lein-*
 
 #Exclude IDEA generated fields:
 /.idea
