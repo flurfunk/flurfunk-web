@@ -3,7 +3,8 @@
   :source-path "src/clj"
   :cljs-source-path "src/cljs"
   :dependencies [[org.clojure/clojure "1.3.0"]
-                 [compojure/compojure "0.6.5"]
+                 [org.clojure/clojurescript "0.0-993"]
+                 [compojure "0.6.5"]
                  [ring/ring-jetty-adapter "0.3.11"]]
   :dev-dependencies [[lein-ring "0.4.5"]]
   :plugins [[lein-cljsbuild "0.1.3"]]
@@ -16,9 +17,4 @@
              :compiler {:output-to "resources/public/flurfunk-dev.js"
                         :pretty-print true}}]}
   :ring {:handler flurfunk.web.routes/flurfunk-web}
-  :main flurfunk.web.jetty
-  :repositories
-  {"releases"
-   {:url "https://www.viaboxxsystems.de/nexus/content/groups/public/"}
-   "snapshots"
-   {:url "https://www.viaboxxsystems.de/nexus/content/groups/public/"}})
+  :main flurfunk.web.jetty)
