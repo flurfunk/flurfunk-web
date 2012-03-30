@@ -4,7 +4,7 @@
   :cljs-source-path "src/cljs"
   :dependencies [[org.clojure/clojure "1.3.0"]
                  [org.clojure/clojurescript "0.0-993"]
-                 [compojure/compojure "0.6.5"]
+                 [compojure "0.6.5"]
                  [ring/ring-jetty-adapter "0.3.11"]]
   :dev-dependencies [[lein-ring "0.4.5"]]
   :ring {:handler flurfunk.web.routes/flurfunk-web}
