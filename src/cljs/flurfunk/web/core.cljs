@@ -97,7 +97,7 @@
       (append-message message-list message flags))))
 
 (defn- update-title []
-  (set! (.title js/document) (str (if (> unread-messages 0)
+  (set! (.-title js/document) (str (if (> unread-messages 0)
                                     (str "(" unread-messages ") "))
                                   title)))
 
@@ -162,7 +162,7 @@
      {:author (.value (dom/get-element :author-name-input))
       :text escaped-text}
      (fn []
-       (set! (.value message-textarea) "")
+       (set! (.-value message-textarea) "")
        (end-composing message-textarea)
        (update-message-list message-list)))))
 
@@ -211,16 +211,16 @@
     (prepare-elements author-name-input message-textarea send-button
                       message-list)
     (if-let [author (get-author-cookie)]
-      (set! (.value author-name-input) author))
+      (set! (.-value author-name-input) author))
     (if (empty? (.value author-name-input))
       (. author-name-input (focus)))
     (js/setInterval #(update-message-list message-list) 1000)
     (update-message-list message-list)
-    (set! (.onfocus js/window) (fn []
+    (set! (.-onfocus js/window) (fn []
                                  (def active true)
                                  (def unread-messages 0)
                                  (update-title)))
-    (set! (.onblur js/window) (fn []
+    (set! (.-onblur js/window) (fn []
                                 (def active false)
                                 (if (empty? (.value message-textarea))
                                   (. message-textarea (blur)))))))
