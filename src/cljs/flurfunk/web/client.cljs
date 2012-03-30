@@ -18,7 +18,7 @@
    [this message callback]
    (swap! messages (fn [messages]
                      (cons (conj message {:id (str (count messages))
-                                          :timestamp (. (js/Date.) (getTime))})
+                                          :timestamp (.getTime (js/Date.))})
                            messages)))
    (callback)))
 
@@ -27,18 +27,18 @@
 
 (defn- make-uri [uri server]
   (str server
-       (if (not (= "/" (nth server (- 1 (.length server))))) "/")
+       (if (not (= "/" (nth server (- 1 (.-length server))))) "/")
        uri))
 
 (defn- unmarshal-messages [messages]
   (let [xml (xml/loadXml messages)
-        message-tags (dom/get-children (.firstChild xml))]
+        message-tags (dom/get-children (.-firstChild xml))]
     (map (fn [message-tag]
-           (let [text (.textContent message-tag)
-                 id (. message-tag (getAttribute "id"))
-                 author (. message-tag (getAttribute "author"))
-                 timestamp (js/parseInt (. message-tag
-                                           (getAttribute "timestamp")))]
+           (let [text (.-textContent message-tag)
+                 id (.getAttribute message-tag "id")
+                 author (.getAttribute message-tag "author")
+                 timestamp (js/parseInt (.getAttribute message-tag
+                                                       "timestamp"))]
              {:id id :author author :timestamp timestamp :text text}))
          message-tags)))
 
@@ -60,8 +60,8 @@
                             (str "messages?since=" since))
                           server)
                 (fn [e]
-                  (let [target (.target e)
-                        text (. target (getResponseText))]
+                  (let [target (.-target e)
+                        text (.getResponseText target)]
                     (callback (unmarshal-messages text))))))
 
   (client-send-message

@@ -19,7 +19,7 @@
 (defn query-elements
   "Return all elements matching the supplied selector."
   [selector]
-  (array/toArray (. js/document (querySelectorAll selector))))
+  (array/toArray (.querySelectorAll js/document selector)))
 
 (defn get-children
   [element]
@@ -63,12 +63,12 @@
   [tag & args]
   (let [[tag attrs children] (normalize-args tag args)
         parent (dom/createDom (name tag)
-                              (.strobj (reduce (fn [m [k v]]
-                                                 (assoc m k v))
-                                               {}
-                                               (map #(vector (name %1) %2)
-                                                    (keys attrs)
-                                                    (vals attrs)))))
+                              (.-strobj (reduce (fn [m [k v]]
+                                                  (assoc m k v))
+                                                {}
+                                                (map #(vector (name %1) %2)
+                                                     (keys attrs)
+                                                     (vals attrs)))))
         [parent children] (if (string? (first children))
                             [(set-text (element tag attrs) (first children))
                              (rest children)]
@@ -96,8 +96,9 @@
   [x]
   (if (vector? x)
     (let [[parent children] (if (keyword? (first x))
-                              [(apply element (take-while element-arg? x))
-                               (drop-while element-arg? x)]
+                              (let [x (cons (name (first x)) (rest x))]
+                                [(apply element (take-while element-arg? x))
+                                 (drop-while element-arg? x)])
                               [(first x) (rest x)])
           children (map build children)]
       (apply append parent children))

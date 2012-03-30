@@ -32,11 +32,11 @@
 
 (defn- format-timestamp [timestamp]
   (let [date (js/Date. timestamp)]
-    (str (. date (getFullYear)) "-"
-         (leading-zero (+ (. date (getMonth)) 1)) "-"
-         (leading-zero (. date (getDate))) " "
-         (leading-zero (. date (getHours))) ":"
-         (leading-zero (. date (getMinutes))))))
+    (str (.getFullYear date) "-"
+         (leading-zero (+ (.getMonth date) 1)) "-"
+         (leading-zero (.getDate date)) " "
+         (leading-zero (.getHours date)) ":"
+         (leading-zero (.getMinutes date)))))
 
 (defn- map-str [f coll]
   (apply str (map f coll)))
@@ -79,9 +79,10 @@
                             message (contains? flags :first-unread))]
        (dom/insert-at message-list message-element 0)
        (if (contains? flags :animate)
-         (. (fx-dom/ResizeHeight. message-element 0
-                                  (.offsetHeight message-element) 500)
-            (play))))))
+         (.play (fx-dom/ResizeHeight.
+                 message-element 0
+                 (.-offsetHeight message-element)
+                 500))))))
 
 (defn- append-messages [message-list messages]
   (let [reversed-messages (reverse messages)
@@ -106,9 +107,8 @@
         is-shown (style/isElementShown waiting-indication)]
     (if (or (and fade-in (not is-shown))
             (and (not fade-in) is-shown))
-      (. (new (if fade-in fx-dom/FadeInAndShow fx-dom/FadeOutAndHide)
-              waiting-indication 500)
-         (play)))))
+      (.play (new (if fade-in fx-dom/FadeInAndShow fx-dom/FadeOutAndHide)
+                  waiting-indication 500)))))
 
 (defn- show-waiting-indication
   ([] (show-waiting-indication true))
@@ -116,9 +116,8 @@
                 is-shown (style/isElementShown waiting-indication)]
             (if (or (and show (not is-shown))
                     (and (not show) is-shown))
-              (. (new (if show fx-dom/FadeInAndShow fx-dom/FadeOutAndHide)
-                      waiting-indication 500)
-                 (play))))))
+              (.play (new (if show fx-dom/FadeInAndShow fx-dom/FadeOutAndHide)
+                          waiting-indication 500))))))
 
 (defn- hide-waiting-indication []
   (show-waiting-indication false))
@@ -145,8 +144,8 @@
       (client/get-messages callback last-fetched))))
 
 (defn- animate-element-height [element new-height]
-  (. (fx-dom/ResizeHeight. element (.offsetHeight element) new-height 100)
-     (play)))
+  (.play (fx-dom/ResizeHeight. element (.-offsetHeight element) new-height
+                               100)))
 
 (defn- begin-composing [message-textarea]
   (animate-element-height message-textarea 90))
@@ -156,10 +155,10 @@
 
 (defn- send-message [message-list send-button]
   (let [message-textarea (dom/get-element :message-textarea)
-        escaped-text (escape-html (.value message-textarea))]
+        escaped-text (escape-html (.-value message-textarea))]
     (.setEnabled send-button false)
     (client/send-message
-     {:author (.value (dom/get-element :author-name-input))
+     {:author (.-value (dom/get-element :author-name-input))
       :text escaped-text}
      (fn []
        (set! (.-value message-textarea) "")
@@ -167,14 +166,14 @@
        (update-message-list message-list)))))
 
 (defn- update-send-button [send-button]
-  (let [author (string/trim (.value (dom/get-element :author-name-input)))
-        text (string/trim (.value (dom/get-element :message-textarea)))]
+  (let [author (string/trim (.-value (dom/get-element :author-name-input)))
+        text (string/trim (.-value (dom/get-element :message-textarea)))]
     (.setEnabled send-button (not (or (empty? author)
                                       (empty? text))))))
 
 (defn- set-author-cookie [author]
   (let [cookies (goog.net/Cookies. js/document)
-        current-time (. (js/Date.) (getTime))
+        current-time (.getTime (js/Date.))
         expiry-time (+ current-time (* 365 (* 24 (* 60 (* 1000 60)))))]
     (.set cookies "author" author expiry-time)))
 
@@ -191,7 +190,7 @@
                    #(send-message message-list send-button-widget))
     (events/listen author-name-input goog.events/EventType.INPUT
                    (fn [e]
-                     (set-author-cookie (.value author-name-input))
+                     (set-author-cookie (.-value author-name-input))
                      (update-send-button send-button-widget)))
     (events/listen message-textarea goog.events/EventType.INPUT
                    #(update-send-button send-button-widget))
@@ -199,7 +198,7 @@
                    #(begin-composing message-textarea))
     (events/listen message-textarea goog.events/EventType.BLUR
                    (fn [e]
-                     (if (empty? (.value message-textarea))
+                     (if (empty? (.-value message-textarea))
                        (end-composing message-textarea))))))
 
 (defn -main []
@@ -212,8 +211,8 @@
                       message-list)
     (if-let [author (get-author-cookie)]
       (set! (.-value author-name-input) author))
-    (if (empty? (.value author-name-input))
-      (. author-name-input (focus)))
+    (if (empty? (.-value author-name-input))
+      (.focus author-name-input))
     (js/setInterval #(update-message-list message-list) 1000)
     (update-message-list message-list)
     (set! (.-onfocus js/window) (fn []
@@ -222,7 +221,7 @@
                                  (update-title)))
     (set! (.-onblur js/window) (fn []
                                 (def active false)
-                                (if (empty? (.value message-textarea))
-                                  (. message-textarea (blur)))))))
+                                (if (empty? (.-value message-textarea))
+                                  (.blur message-textarea))))))
 
 (-main)
