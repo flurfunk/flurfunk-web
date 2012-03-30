@@ -10,10 +10,10 @@
   :hooks [leiningen.cljsbuild]
   :cljsbuild
   {:builds [{:source-path "src/cljs"
-             :compiler {:output-to "resources/public/flurfunk-web.js"
+             :compiler {:output-to "resources/public/flurfunk.js"
                         :optimizations :advanced}}
             {:source-path "src/cljs"
-             :compiler {:output-to "resources/public/flurfunk-web-dev.js"
+             :compiler {:output-to "resources/public/flurfunk-dev.js"
                         :pretty-print true}}]}
   :ring {:handler flurfunk.web.routes/flurfunk-web}
   :main flurfunk.web.jetty

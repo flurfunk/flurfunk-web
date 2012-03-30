@@ -1,7 +1,7 @@
 /classes
 /lib
-/resources/public/flurfunk-web.js
-/resources/public/flurfunk-web-dev.js
+/resources/public/flurfunk.js
+/resources/public/flurfunk-dev.js
 /temp
 /.dir-locals.el
 /.lein-*
