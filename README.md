@@ -4,15 +4,14 @@ Flurfunk web frontend
 A client for the Flurfunk server, written in ClojureScript and built using
 Leiningen.
 
-Installing Leiningen
---------------------
-
-    curl -O https://raw.github.com/technomancy/leiningen/stable/bin/lein
-    chmod +x lein
-    mv lein ~/bin/ # Make sure that ~/bin/ exists and is on the $PATH
-
 Building and running
 --------------------
+
+### Installing Leiningen 2 ###
+
+    curl -O https://raw.github.com/technomancy/leiningen/preview/bin/lein
+    chmod +x lein
+    mv lein ~/bin/ # Make sure that ~/bin/ exists and is on the $PATH
 
 ### Development mode ###
 
@@ -26,14 +25,12 @@ Then go to http://localhost:3000/index-dev.html.
     lein cljsbuild once
     lein ring server
 
-Creating a WAR
---------------
+### Creating a WAR ###
 
     mkdir temp
     lein ring uberwar temp/flurfunk-web.war
 
-Deploying the WAR to Nexus
---------------------------
+### Deploying the WAR to Nexus ###
 
 After creating a WAR, you can deploy it to Nexus like this:
 
@@ -45,8 +42,7 @@ After creating a WAR, you can deploy it to Nexus like this:
                        -DpomFile=temp/pom.xml \
                        -Dpackaging=war 
 
-Downloading WAR from Nexus
---------------------------
+### Downloading WAR from Nexus ###
 
 After deploying to Nexus, you might want to download the WAR to a server where
 it can be deployed into a container:
