@@ -21,7 +21,7 @@
 var flurfunkServer = location.href.replace(\"index.html\", \"\")
     .replace(\"flurfunk-web\", \"flurfunk-server\").replace(/\\/$/, \"\");
 "]
-   (include-js "flurfunk-web.js")))
+   (include-js "flurfunk.js")))
 
 (defn index-dev []
   (index-template
@@ -33,8 +33,6 @@ var flurfunkServer = location.href.replace(\"index.html\", \"\")
     [:input {:id "server-url" :type "text"}]
     [:button {:onclick "reloadPage()"} "Reload"]]
    [:hr]
-   (include-js "out-dev/goog/base.js")
-   (include-js "flurfunk-web-dev.js")
    [:script "
 function enableUrlInput(enable) {
     document.getElementById(\"server-url\").disabled = !enable;
@@ -67,6 +65,5 @@ if (flurfunkServer) {
     document.getElementById(\"use-real-server\").checked = true;
 } else
     enableUrlInput(false);
-
-goog.require(\"flurfunk.web.core\");
-"]))
+"]
+   (include-js "flurfunk-dev.js")))
