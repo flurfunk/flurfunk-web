@@ -5,6 +5,7 @@
 /temp
 /.dir-locals.el
 /.lein-*
+/target
 
 #Exclude IDEA generated fields:
 /.idea
