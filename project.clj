@@ -4,7 +4,7 @@
   :cljs-source-path "src/cljs"
   :dependencies [[org.clojure/clojure "1.3.0"]
                  [org.clojure/clojurescript "0.0-993"]
-                 [compojure "0.6.5"]
+                 [compojure "1.0.2"]
                  [hiccup "0.3.8"]
                  [ring/ring-jetty-adapter "0.3.11"]]
   :plugins [[lein-cljsbuild "0.1.3"]
