@@ -17,9 +17,8 @@
 (defn index []
   (index-template
    [:script "
-// Use a server on the same host, Jetty or Tomcat.
 var flurfunkServer = location.href.replace(\"index.html\", \"\")
-    .replace(\"flurfunk-web\", \"flurfunk-server\").replace(/\\/$/, \"\");
+    .replace(/\\/$/, \"\") + \"/proxy\";
 "]
    (include-js "flurfunk.js")))
 
