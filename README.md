@@ -25,6 +25,12 @@ Then go to http://localhost:3000/dev.
     lein cljsbuild once
     lein ring server
 
+### Mobile style ###
+
+Flurfunk comes with a style optimised for mobile devices. You can see
+it in production mode on http://localhost:3000/mobile and in
+development mode on http://localhost:3000/mobile/dev.
+
 ### Creating a WAR ###
 
     mkdir temp

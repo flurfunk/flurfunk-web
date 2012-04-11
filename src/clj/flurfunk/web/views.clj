@@ -1,7 +1,7 @@
 (ns flurfunk.web.views
   (:use [hiccup core page-helpers]))
 
-(defn- index-template [& body]
+(defn- index-template [mobile? & body]
   (html5
    [:head
     [:meta {:charset "utf-8"}]
@@ -9,13 +9,13 @@
             :content (str "width=device-width,initial-scale=1.0,"
                           "maximum-scale=1.0,user-scalable=0")}]
     [:title "Flurfunk"]
-    (include-css "flurfunk.css")
-    [:link {:rel "stylesheet" :type "text/css" :href "flurfunk-mobile.css"
-            :media "only screen and (max-device-width: 480px)"}]]
+    (if mobile?
+      (include-css "flurfunk-mobile.css")
+      (include-css "flurfunk.css"))]
    (vec (cons :body body))))
 
-(defn index []
-  (index-template
+(defn index [mobile?]
+  (index-template mobile?
    [:script "
 // Use a server on the same host, Jetty or Tomcat.
 var flurfunkServer = location.href.replace(\"index.html\", \"\")
@@ -23,8 +23,8 @@ var flurfunkServer = location.href.replace(\"index.html\", \"\")
 "]
    (include-js "flurfunk.js")))
 
-(defn index-dev []
-  (index-template
+(defn index-dev [mobile?]
+  (index-template mobile?
    [:form
     [:input {:type "checkbox" :id "use-real-server"
              :onchange "enableUrlInput(this.checked)"}]
