@@ -7,12 +7,17 @@
             [ring.util.response :as response]
             [clj-http.client :as http-client]))
 
-;; TODO: What should happen when this property has not been set?
 (def ^:private server-uri (System/getProperty "flurfunk.server.uri"))
 
-(defn- make-proxy-uri [uri]
-  (let [path (.substring uri (count "/proxy"))]
-    (str server-uri path)))
+(defn- make-proxy-uri [uri request]
+  (let [context-path (if request (.getContextPath request) "")
+        path (.substring uri (count (str context-path "/proxy")))]
+    (str (or server-uri
+             (if (not (empty? context-path))
+               ;; TODO: Don't hard code host and port
+               "http://localhost:8080/flurfunk-server"
+               "http://localhost:4000"))
+         path)))
 
 (defroutes main-routes
   (GET "/" {uri :uri
@@ -24,11 +29,13 @@
   (GET "/dev" [] (views/index-dev false))
   (GET "/mobile/dev" [] (views/index-dev true))
   (GET "/proxy/*" {uri :uri
-                   params :params}
-       (http-client/get (make-proxy-uri uri) {:query-params params}))
+                   params :params
+                   request :servlet-context}
+       (http-client/get (make-proxy-uri uri request) {:query-params params}))
   (POST "/proxy/*" {uri :uri
-                    body :body}
-        (http-client/post (make-proxy-uri uri) {:body (slurp body)}))
+                    body :body
+                    request :servlet-context}
+        (http-client/post (make-proxy-uri uri request) {:body (slurp body)}))
   (route/resources "/")
   (route/resources "/mobile")
   (route/not-found "Page not found"))

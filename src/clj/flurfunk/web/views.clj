@@ -17,8 +17,7 @@
 (defn index [mobile?]
   (index-template mobile?
    [:script "
-var flurfunkServer = location.href.replace(\"index.html\", \"\")
-    .replace(/\\/$/, \"\") + \"/proxy\";
+var flurfunkServer = location.href.replace(/\\/$/, \"/proxy\");
 "]
    (include-js "flurfunk.js")))
 

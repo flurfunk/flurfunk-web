@@ -25,6 +25,12 @@ Then go to http://localhost:3000/dev.
     lein cljsbuild once
     lein ring server
 
+This will try to connect to a server running at
+http://localhost:4000. If you're server is running somewhere else, you
+need to set the _flurfunk.server.uri_ system property:
+
+    JAVA_OPTS="-Dflurfunk.server.uri=http://localhost:1337" lein ring server
+
 ### Mobile style ###
 
 Flurfunk comes with a style optimised for mobile devices. You can see
@@ -35,6 +41,11 @@ development mode on http://localhost:3000/mobile/dev.
 
     mkdir temp
     lein ring uberwar temp/flurfunk-web.war
+
+When running in an application server like Tomcat as non-root app
+(i.e. with a context path), flurfunk-server is expected at the context
+path _/flurfunk-server_ in the same application server. You can
+overwrite this by setting the system property _flurfunk.server.uri_.
 
 License
 -------
