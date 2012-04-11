@@ -8,15 +8,17 @@
                  [hiccup "0.3.8"]
                  [ring/ring-jetty-adapter "0.3.11"]
                  [clj-http "0.3.6"]]
-  :plugins [[lein-cljsbuild "0.1.3"]
+  :plugins [[lein-cljsbuild "0.1.6"]
             [lein-ring "0.6.3"]]
   :hooks [leiningen.cljsbuild]
   :cljsbuild
-  {:builds [{:source-path "src/cljs"
+  {:builds {:prod
+            {:source-path "src/cljs"
              :compiler {:output-to "resources/public/flurfunk.js"
                         :optimizations :advanced}}
+            :dev
             {:source-path "src/cljs"
              :compiler {:output-to "resources/public/flurfunk-dev.js"
-                        :pretty-print true}}]}
+                        :pretty-print true}}}}
   :ring {:handler flurfunk.web.routes/flurfunk-web}
   :main flurfunk.web.jetty)
