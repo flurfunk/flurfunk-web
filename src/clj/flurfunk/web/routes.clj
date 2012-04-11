@@ -11,9 +11,12 @@
             request :servlet-context}
        (if (and request (= uri (.getContextPath request)))
          (response/redirect (str uri "/"))
-         (views/index)))
-  (GET "/dev" [] (views/index-dev))
+         (views/index false)))
+  (GET "/mobile" [] (views/index true))
+  (GET "/dev" [] (views/index-dev false))
+  (GET "/mobile/dev" [] (views/index-dev true))
   (route/resources "/")
+  (route/resources "/mobile")
   (route/not-found "Page not found"))
 
 (def flurfunk-web
