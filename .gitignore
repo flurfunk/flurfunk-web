@@ -2,7 +2,6 @@
 /lib
 /resources/public/flurfunk.js
 /resources/public/flurfunk-dev.js
-/temp
 /.dir-locals.el
 /.lein-*
 /target
