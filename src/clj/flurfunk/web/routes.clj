@@ -7,7 +7,7 @@
             [ring.util.response :as response]
             [clj-http.client :as http-client]))
 
-(def ^:private server-uri (System/getProperty "flurfunk.server.uri"))
+(def ^:private server-uri (System/getProperty "flurfunk.server"))
 
 (defn- make-proxy-uri [uri request]
   (let [context-path (if request (.getContextPath request) "")
