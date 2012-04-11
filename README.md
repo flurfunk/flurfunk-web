@@ -26,7 +26,7 @@ Then go to http://localhost:3000/dev.
     lein ring server
 
 This will try to connect to a server running at
-http://localhost:4000. If you're server is running somewhere else, you
+http://localhost:4000. If your server is running somewhere else, you
 need to set the _flurfunk.server.uri_ system property:
 
     JAVA_OPTS="-Dflurfunk.server.uri=http://localhost:1337" lein ring server
@@ -39,13 +39,29 @@ development mode on http://localhost:3000/mobile/dev.
 
 ### Creating a WAR ###
 
-    mkdir temp
-    lein ring uberwar temp/flurfunk-web.war
+    lein ring uberwar flurfunk-web.war
+
+This will create _target/flurfunk-web.war_.
 
 When running in an application server like Tomcat as non-root app
 (i.e. with a context path), flurfunk-server is expected at the context
 path _/flurfunk-server_ in the same application server. You can
 overwrite this by setting the system property _flurfunk.server.uri_.
+
+### Creating a standalone JAR that includes Jetty ###
+
+    lein uberjar
+	mv target/flurfunk-web-*-standalone.jar target/flurfunk-web.jar
+
+### Running the standalone JAR ###
+
+    java -jar target/flurfunk-web.jar
+
+This will try to connect to a server running at
+http://localhost:4000. If your server is running somewhere else, you
+need to set the _flurfunk.server.uri_ system property:
+
+    java -jar target/flurfunk-web.jar -Dflurfunk.server.uri=http://localhost:1337
 
 License
 -------
