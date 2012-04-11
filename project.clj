@@ -7,7 +7,7 @@
                  [compojure "1.0.2"]
                  [hiccup "0.3.8"]
                  [ring/ring-jetty-adapter "0.3.11"]]
-  :plugins [[lein-cljsbuild "0.1.3"]
+  :plugins [[lein-cljsbuild "0.1.6"]
             [lein-ring "0.6.3"]]
   :hooks [leiningen.cljsbuild]
   :cljsbuild
