@@ -18,37 +18,23 @@ Building and running
     lein cljsbuild auto
     lein ring server-headless
     
-Then go to http://localhost:3000/index-dev.html.
+Then go to http://localhost:3000/dev.
 
 ### Production mode ###
 
     lein cljsbuild once
     lein ring server
 
+### Mobile style ###
+
+Flurfunk comes with a style optimised for mobile devices. You can see
+it in production mode on http://localhost:3000/mobile and in
+development mode on http://localhost:3000/mobile/dev.
+
 ### Creating a WAR ###
 
     mkdir temp
     lein ring uberwar temp/flurfunk-web.war
-
-### Deploying the WAR to Nexus ###
-
-After creating a WAR, you can deploy it to Nexus like this:
-
-    lein pom temp/pom.xml
-
-    mvn deploy:deploy-file -Durl=https://server/nexus/content/repositories/snapshots/ \
-                       -DrepositoryId=viaboxx-snapshots \
-                       -Dfile=flurfunk-web.war \
-                       -DpomFile=temp/pom.xml \
-                       -Dpackaging=war 
-
-### Downloading WAR from Nexus ###
-
-After deploying to Nexus, you might want to download the WAR to a server where
-it can be deployed into a container:
-
-    wget -O flurfunk-web.war --user=jenkins-artifacts --password=PASSWORD \
-        'https://server/nexus/service/local/artifact/maven/redirect?r=snapshots&g=de.viaboxx.flurfunk&a=flurfunk-web&v=0.1.0-SNAPSHOT&e=war'
 
 License
 -------
