@@ -11,11 +11,13 @@
             [lein-ring "0.6.3"]]
   :hooks [leiningen.cljsbuild]
   :cljsbuild
-  {:builds [{:source-path "src/cljs"
+  {:builds {:prod
+            {:source-path "src/cljs"
              :compiler {:output-to "resources/public/flurfunk.js"
                         :optimizations :advanced}}
+            :dev
             {:source-path "src/cljs"
              :compiler {:output-to "resources/public/flurfunk-dev.js"
-                        :pretty-print true}}]}
+                        :pretty-print true}}}}
   :ring {:handler flurfunk.web.routes/flurfunk-web}
   :main flurfunk.web.jetty)
