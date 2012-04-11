@@ -33,8 +33,18 @@ development mode on http://localhost:3000/mobile/dev.
 
 ### Creating a WAR ###
 
-    mkdir temp
-    lein ring uberwar temp/flurfunk-web.war
+    lein ring uberwar flurfunk-web.war
+
+This will create _target/flurfunk-web.war_.
+
+### Creating a standalone JAR that includes Jetty ###
+
+    lein uberjar
+	mv target/flurfunk-web-*-standalone.jar target/flurfunk-web.jar
+
+### Running the standalone JAR ###
+
+    java -jar target/flurfunk-web.jar
 
 License
 -------
