@@ -141,3 +141,7 @@ button.goog-button-disabled:active {
     border: 1px solid #b00;
     opacity: 0.5;
 }
+
+.mention {
+    color: #038;
+}

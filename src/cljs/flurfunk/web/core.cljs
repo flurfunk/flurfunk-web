@@ -56,13 +56,14 @@
                        [">" "&gt;"]]))
 
 (defn- format-message-text [text]
-  (let [escaped-text (escape-html text)
-        trimmed-text (string/trim escaped-text)
-        text-with-links (replace-all trimmed-text "(https?://\\S*)"
-                                     "<a href=\"$1\" target=\"_blank\">$1</a>")
-        paragraphs (vec (.split text-with-links "\n\n"))
-        text-with-paragraphs (map-str #(str "<p>" % "</p>") paragraphs)]
-    (dom/html (replace-all text-with-paragraphs "\n" "<br/>"))))
+  (let [text (escape-html text)
+        text (string/trim text)
+        text (replace-all text "(https?://\\S*)"
+                          "<a href='$1' target='_blank'>$1</a>")
+        text (replace-all text "(@[^\\s:]+)" "<span class='mention'>$1</span>")
+        paragraphs (vec (.split text "\n\n"))
+        text (map-str #(str "<p>" % "</p>") paragraphs)]
+    (dom/html (replace-all text "\n" "<br/>"))))
 
 (defn- create-message-element
   ([message]
