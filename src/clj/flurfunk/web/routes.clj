@@ -33,9 +33,9 @@
                    params :params
                    body :body}
        (let [proxy-uri (make-proxy-uri uri context)]
-         (if (= method :get)
-           (http-client/get proxy-uri {:query-params params})
-           (http-client/post proxy-uri {:body (slurp body)}))))
+         (:body (if (= method :get)
+                  (http-client/get proxy-uri {:query-params params})
+                  (http-client/post proxy-uri {:body (slurp body)})))))
   (route/resources "/")
   (route/resources "/mobile")
   (route/not-found "Page not found"))
