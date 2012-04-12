@@ -9,33 +9,37 @@
 
 (def ^:private server-uri (System/getProperty "flurfunk.server"))
 
-(defn- make-proxy-uri [uri request]
-  (let [context-path (if request (.getContextPath request) "")
+(defn- make-proxy-uri [uri context scheme host port]
+  (let [context-path (if context (.getContextPath context) "")
         path (.substring uri (count (str context-path "/proxy")))]
     (str (or server-uri
              (if (not (empty? context-path))
-               ;; TODO: Don't hard code host and port
-               "http://localhost:8080/flurfunk-server"
+               (str (name scheme) "://" host ":" port "/flurfunk-server")
                "http://localhost:4000"))
          path)))
 
 (defroutes main-routes
   (GET "/" {uri :uri
-            request :servlet-context}
-       (if (and request (= uri (.getContextPath request)))
+            context :servlet-context}
+       (if (and context (= uri (.getContextPath context)))
          (response/redirect (str uri "/"))
          (views/index false)))
   (GET "/mobile" [] (views/index true))
   (GET "/dev" [] (views/index-dev false))
   (GET "/mobile/dev" [] (views/index-dev true))
-  (GET "/proxy/*" {uri :uri
+  (ANY "/proxy/*" {uri :uri
                    params :params
-                   request :servlet-context}
-       (http-client/get (make-proxy-uri uri request) {:query-params params}))
-  (POST "/proxy/*" {uri :uri
-                    body :body
-                    request :servlet-context}
-        (http-client/post (make-proxy-uri uri request) {:body (slurp body)}))
+                   body :body
+                   context :servlet-context
+                   method :request-method
+                   scheme :scheme
+                   host :server-name
+                   port :server-port}
+       (if (= method :get)
+         (http-client/get (make-proxy-uri uri context scheme host port)
+                          {:query-params params})
+         (http-client/post (make-proxy-uri uri context scheme host port)
+                           {:body (slurp body)})))
   (route/resources "/")
   (route/resources "/mobile")
   (route/not-found "Page not found"))
