@@ -70,7 +70,7 @@
                  (fn [] (callback)) (marshal-message message))))
 
 (defn- make-client []
-  (if-let [server js/flurfunkServer]
+  (if-let [server (.-server js/flurfunk)]
     (HttpClient. server)
     (StubClient. (atom []))))
 

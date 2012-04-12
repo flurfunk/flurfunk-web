@@ -12,12 +12,19 @@
     (include-css "flurfunk.css")
     (if mobile?
       (include-css "flurfunk-mobile.css"))]
-   (vec (cons :body body))))
+   (vec (concat
+         [:body
+          [:script (str "
+var flurfunk = {
+    mobile: " mobile? "
+};
+")]]
+         body))))
 
 (defn index [mobile?]
   (index-template mobile?
    [:script "
-var flurfunkServer = location.href.replace(/\\/$/, '/proxy');
+flurfunk.server = location.href.replace(/\\/$/, '/proxy');
 "]
    (include-js "flurfunk.js")))
 
@@ -29,15 +36,13 @@ var flurfunkServer = location.href.replace(/\\/$/, '/proxy');
     [:label {:for "use-real-server"} "Use real server"]]
    [:hr]
    [:script "
-var flurfunkServer;
-
 (function() {
     var baseUrl = location.origin + location.pathname,
         useRealServer = document.getElementById('use-real-server');
 
     useRealServer.checked = location.hash === '#use-real-server';
 
-    flurfunkServer = useRealServer.checked ?
+    flurfunk.server = useRealServer.checked ?
         baseUrl.replace(/\\/dev$/, '/proxy') : null;
 
     useRealServer.onchange = function() {
