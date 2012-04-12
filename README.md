@@ -48,9 +48,9 @@ development mode on http://localhost:3000/mobile/dev.
 This will create _target/flurfunk-web.war_.
 
 When running in an application server like Tomcat as non-root app
-(i.e. with a context path), flurfunk-server is expected at the context
-path _/flurfunk-server_ in the same application server. You can
-overwrite this by setting the system property _flurfunk.server_.
+(i.e. with a context path), flurfunk-server is expected at the URL
+_http://localhost:8080/flurfunk-server_. You can overwrite this by
+setting the system property _flurfunk.server_.
 
 ### Creating a standalone JAR that includes Jetty ###
 
