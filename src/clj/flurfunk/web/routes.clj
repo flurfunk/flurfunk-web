@@ -10,10 +10,9 @@
 (def ^:private server-uri (System/getProperty "flurfunk.server"))
 
 (defn- make-proxy-uri [uri context]
-  (let [context-path (if context (.getContextPath context) "")
-        path (.substring uri (count (str context-path "/proxy")))]
+  (let [path (second (re-find #"/proxy(.*)" uri))]
     (str (or server-uri
-             (if (not (empty? context-path))
+             (if (and context (not (empty? (.getContextPath context))))
                "http://localhost:8080/flurfunk-server"
                "http://localhost:4000"))
          path)))
@@ -27,7 +26,7 @@
   (GET "/mobile" [] (views/index true))
   (GET "/dev" [] (views/index-dev false))
   (GET "/mobile/dev" [] (views/index-dev true))
-  (ANY "/proxy/*" {uri :uri
+  (ANY "*/proxy/*" {uri :uri
                    context :servlet-context
                    method :request-method
                    params :params
