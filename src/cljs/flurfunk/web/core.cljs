@@ -13,6 +13,7 @@
 (def ^{:private true} last-fetched nil)
 (def ^{:private true} active true)
 (def ^{:private true} unread-messages 0)
+(def ^{:private true} mobile? (.-mobile js/flurfunk))
 
 (defn- create-dom []
   (dom/build [:div#content
@@ -87,7 +88,9 @@
 (defn- append-messages [message-list messages]
   (let [reversed-messages (reverse messages)
         first-unread (and (not active) (= unread-messages 0))
-        flags (conj #{} (if (= (count messages) 1) :animate))]
+        flags (conj #{} (if (and (not mobile?)
+                                 (= (count messages) 1))
+                          :animate))]
     (when first-unread
       (doseq [unread-message-div
               (dom/query-elements "div#message-list>*.first-unread")]
@@ -148,10 +151,12 @@
                                100)))
 
 (defn- begin-composing [message-textarea]
-  (animate-element-height message-textarea 90))
+  (if (not mobile?)
+    (animate-element-height message-textarea 90)))
 
 (defn- end-composing [message-textarea]
-  (animate-element-height message-textarea 30))
+  (if (not mobile?)
+    (animate-element-height message-textarea 30)))
 
 (defn- send-message [message-list send-button]
   (let [message-textarea (dom/get-element :message-textarea)
