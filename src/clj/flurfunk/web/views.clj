@@ -24,7 +24,7 @@ var flurfunk = {
 (defn index [mobile?]
   (index-template mobile?
    [:script "
-flurfunk.server = location.href.replace(/\\/$/, '/proxy');
+flurfunk.server = location.href.replace(/\\/?$/, '/proxy');
 "]
    (include-js "flurfunk.js")))
 
@@ -43,7 +43,7 @@ flurfunk.server = location.href.replace(/\\/$/, '/proxy');
     useRealServer.checked = location.hash === '#use-real-server';
 
     flurfunk.server = useRealServer.checked ?
-        baseUrl.replace(/\\/dev$/, '/proxy') : null;
+        baseUrl.replace(/\\/dev\\/?$/, '/proxy') : null;
 
     useRealServer.onchange = function() {
         location.hash = useRealServer.checked ? '#use-real-server' : '';
