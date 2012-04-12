@@ -1,14 +1,8 @@
-/classes
-/lib
 /resources/public/flurfunk.js
 /resources/public/flurfunk-dev.js
 /.dir-locals.el
 /.lein-*
 /target
-
-#Exclude IDEA generated fields:
 /.idea
 *.iml
 
-#Exclude pom file generated with 'lein pom' (practical for importing project into idea)
-/pom.xml
