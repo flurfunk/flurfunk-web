@@ -20,6 +20,10 @@ Building and running
     
 Then go to http://localhost:3000/dev.
 
+This will simulate a Flurfunk server in-browser. If you want to
+connect to a real one, tick the _Use real server_ checkbox. The URL is
+set as in production mode, see below.
+
 ### Production mode ###
 
     lein cljsbuild once
