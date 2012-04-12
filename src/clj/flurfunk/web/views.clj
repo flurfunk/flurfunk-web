@@ -17,9 +17,7 @@
 (defn index [mobile?]
   (index-template mobile?
    [:script "
-// Use a server on the same host, Jetty or Tomcat.
-var flurfunkServer = location.href.replace(\"index.html\", \"\")
-    .replace(\"flurfunk-web\", \"flurfunk-server\").replace(/\\/$/, \"\");
+var flurfunkServer = location.href.replace(/\\/$/, '/proxy');
 "]
    (include-js "flurfunk.js")))
 
@@ -28,42 +26,24 @@ var flurfunkServer = location.href.replace(\"index.html\", \"\")
    [:form
     [:input {:type "checkbox" :id "use-real-server"
              :onchange "enableUrlInput(this.checked)"}]
-    [:label {:for "use-real-server"} "Use real server"]
-    [:label {:for "server-url"} "URL:"]
-    [:input {:id "server-url" :type "text"}]
-    [:button {:onclick "reloadPage()"} "Reload"]]
+    [:label {:for "use-real-server"} "Use real server"]]
    [:hr]
    [:script "
-function enableUrlInput(enable) {
-    document.getElementById(\"server-url\").disabled = !enable;
-}
+var flurfunkServer;
 
-function reloadPage() {
-    var url = location.href,
-        parametersIndex = url.indexOf(\"#\");
-    if (parametersIndex != -1)
-        url = url.substring(0, parametersIndex);
-    if (document.getElementById(\"use-real-server\").checked)
-        url += \"#server=\" + document.getElementById(\"server-url\").value;
-    window.location.href = url;
-}
+(function() {
+    var baseUrl = location.origin + location.pathname,
+        useRealServer = document.getElementById('use-real-server');
 
-function getParameter(name) {
-    var parameters = location.hash.substring(1).split(\"&\");
-    for (var i = 0; i < parameters.length; i++) {
-        var pair = parameters[i].split(\"=\");
-        if (pair[0] == name)
-            return pair[1];
-    }
-    return null;
-}
+    useRealServer.checked = location.hash === '#use-real-server';
 
-// The Flurfunk server's URL. The stub server is used when it is null.
-var flurfunkServer = getParameter(\"server\");
-if (flurfunkServer) {
-    document.getElementById(\"server-url\").value = flurfunkServer;
-    document.getElementById(\"use-real-server\").checked = true;
-} else
-    enableUrlInput(false);
+    flurfunkServer = useRealServer.checked ?
+        baseUrl.replace(/\\/dev$/, '/proxy') : null;
+
+    useRealServer.onchange = function() {
+        location.hash = useRealServer.checked ? '#use-real-server' : '';
+        location.reload();
+    };
+})();
 "]
    (include-js "flurfunk-dev.js")))
