@@ -13,7 +13,7 @@
 (def ^{:private true} last-fetched nil)
 (def ^{:private true} active true)
 (def ^{:private true} unread-messages 0)
-(def ^{:private true} mobile? (.-mobile js/flurfunk))
+(def ^{:private true} mobile? js/flurfunkMobile)
 
 (defn- create-dom []
   (dom/build [:div#content
