@@ -9,9 +9,9 @@
             :content (str "width=device-width,initial-scale=1.0,"
                           "maximum-scale=1.0,user-scalable=0")}]
     [:title "Flurfunk"]
+    (include-css "flurfunk.css")
     (if mobile?
-      (include-css "flurfunk-mobile.css")
-      (include-css "flurfunk.css"))]
+      (include-css "flurfunk-mobile.css"))]
    (vec (cons :body body))))
 
 (defn index [mobile?]
