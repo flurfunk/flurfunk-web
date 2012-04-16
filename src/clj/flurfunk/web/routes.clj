@@ -39,5 +39,5 @@
   (route/resources "/mobile")
   (route/not-found "Page not found"))
 
-(def flurfunk-web
+(def app
      (handler/site main-routes))

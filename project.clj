@@ -20,5 +20,5 @@
             {:source-path "src/cljs"
              :compiler {:output-to "resources/public/flurfunk-dev.js"
                         :pretty-print true}}}}
-  :ring {:handler flurfunk.web.routes/flurfunk-web}
+  :ring {:handler flurfunk.web.routes/app}
   :main flurfunk.web.jetty)
