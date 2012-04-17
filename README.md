@@ -55,7 +55,6 @@ setting the system property _flurfunk.server_.
 ### Creating a standalone JAR that includes Jetty ###
 
     lein uberjar
-	mv target/flurfunk-web-*-standalone.jar target/flurfunk-web.jar
 
 ### Running the standalone JAR ###
 

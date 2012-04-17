@@ -21,4 +21,5 @@
              :compiler {:output-to "resources/public/flurfunk-dev.js"
                         :pretty-print true}}}}
   :ring {:handler flurfunk.web.routes/app}
-  :main flurfunk.web.jetty)
+  :main flurfunk.web.jetty
+  :uberjar-name "flurfunk-web.jar")
