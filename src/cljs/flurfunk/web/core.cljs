@@ -26,7 +26,8 @@
                 [:textarea#message-textarea]
                 [:button#send-button "Send message"]
                 [:div#waiting-indication]]
-               [:div#message-list]]]))
+               [:div#message-list]]
+              [:button#load-more-button "Load more messages"]]))
 
 (defn- leading-zero [number]
   (str (if (< number 10) "0") number))
@@ -171,6 +172,11 @@
        (end-composing message-textarea)
        (update-message-list message-list)))))
 
+(defn- load-more-messages [message-list load-more-button]
+  (.setEnabled load-more-button false)
+  (.log js/console "TODO: Actually load more messages.")
+  (.setEnabled load-more-button true))
+
 (defn- update-send-button [send-button]
   (let [author (string/trim (.-value (dom/get-element :author-name-input)))
         text (string/trim (.-value (dom/get-element :message-textarea)))]
@@ -188,12 +194,16 @@
     (.get cookies "author")))
 
 (defn- prepare-elements [author-name-input message-textarea send-button
-                         message-list]
-  (let [send-button-widget (goog.ui/Button. "Send message")]
+                         message-list load-more-button]
+  (let [send-button-widget (goog.ui/Button.)
+        load-more-button-widget (goog.ui/Button.)]
     (.decorate send-button-widget send-button)
     (.setEnabled send-button-widget false)
+    (.decorate load-more-button-widget load-more-button)
     (events/listen send-button-widget goog.ui.Component/EventType.ACTION
                    #(send-message message-list send-button-widget))
+    (events/listen load-more-button-widget goog.ui.Component/EventType.ACTION
+                   #(load-more-messages message-list load-more-button-widget))
     (events/listen author-name-input goog.events/EventType.INPUT
                    (fn [e]
                      (set-author-cookie (.-value author-name-input))
@@ -212,9 +222,10 @@
   (let [author-name-input (dom/get-element :author-name-input)
         message-textarea (dom/get-element :message-textarea)
         send-button (dom/get-element :send-button)
-        message-list (dom/get-element :message-list)]
+        message-list (dom/get-element :message-list)
+        load-more-button (dom/get-element :load-more-button)]
     (prepare-elements author-name-input message-textarea send-button
-                      message-list)
+                      message-list load-more-button)
     (if-let [author (get-author-cookie)]
       (set! (.-value author-name-input) author))
     (if (empty? (.-value author-name-input))
