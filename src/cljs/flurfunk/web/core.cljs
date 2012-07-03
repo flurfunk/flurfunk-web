@@ -145,6 +145,7 @@
                      (compare-and-set! waiting true false)))]
     (js/setTimeout (fn [] (if @waiting (show-waiting-indication))) 500)
     (if (nil? last-fetched)
+      ;; TODO: Only fetch ~20 messages
       (client/get-messages callback)
       (client/get-messages callback last-fetched))))
 
