@@ -4,15 +4,18 @@
             [goog.net.XhrIo :as XhrIo]))
 
 (defprotocol Client
-  (client-get-messages [this callback] [this callback since])
+  (client-get-messages [this callback] [this callback params])
   (client-send-message [this message callback]))
 
 (deftype StubClient [messages] Client
   (client-get-messages [this callback] (callback @messages))
 
   (client-get-messages
-   [this callback since]
-   (callback (filter (fn [message] (> (:timestamp message) since)) @messages)))
+   [this callback params]
+   (callback (filter (fn [message]
+                       (> (:timestamp message) (:since params))
+                       (< (:timestamp message) (:since before)))
+                     @messages)))
 
   (client-send-message
    [this message callback]
@@ -51,14 +54,17 @@
 (deftype HttpClient [server] Client
   (client-get-messages
    [this callback]
-   (client-get-messages this callback nil))
+   (client-get-messages this callback {}))
 
   (client-get-messages
-   [this callback since]
-   (get-request (make-uri (if (nil? since)
-                            "messages"
-                            (str "messages?since=" since))
-                          server)
+   [this callback params]
+   ;; TODO: Find a nicer way to build the query string
+   (get-request (make-uri
+                 (str
+                  "messages?count=100" ;; Don't hard code the count
+                  (if-let [since (:since params)] (str "&since=" since))
+                  (if-let [before (:before params)] (str "&before=" before)))
+                 server)
                 (fn [e]
                   (let [target (.-target e)
                         text (.getResponseText target)]
