@@ -142,6 +142,10 @@ button.goog-button-disabled:active {
     opacity: 0.5;
 }
 
+button#load-more-button {
+    width: 100%;
+}
+
 a {
     text-decoration: none;
 }

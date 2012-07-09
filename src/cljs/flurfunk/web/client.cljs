@@ -4,15 +4,23 @@
             [goog.net.XhrIo :as XhrIo]))
 
 (defprotocol Client
-  (client-get-messages [this callback] [this callback since])
+  (client-get-messages [this callback] [this callback params])
   (client-send-message [this message callback]))
 
 (deftype StubClient [messages] Client
   (client-get-messages [this callback] (callback @messages))
 
   (client-get-messages
-   [this callback since]
-   (callback (filter (fn [message] (> (:timestamp message) since)) @messages)))
+   [this callback params]
+   (callback (filter (fn [message]
+                       (and
+                        (if-let [since (:since params)]
+                          (> (:timestamp message) since)
+                          true)
+                        (if-let [before (:before params)]
+                          (< (:timestamp message) before)
+                          true)))
+                     @messages)))
 
   (client-send-message
    [this message callback]
@@ -43,27 +51,30 @@
          message-tags)))
 
 (defn- post-request [uri callback content]
-  (XhrIo/send uri (fn [e] (callback)) "post", content))
+  (XhrIo/send uri (fn [e] (callback)) "post" content))
 
 (defn- marshal-message [message]
   (str "<message author='" (:author message) "'>" (:text message) "</message>"))
 
+(defn- build-query-string [params]
+  (if (empty? params)
+    ""
+    (str "?"
+         (reduce #(str %1 "&" %2)
+                 (map #(str (name %) "=" (% params)) (keys params))))))
+
 (deftype HttpClient [server] Client
   (client-get-messages
    [this callback]
-   (client-get-messages this callback nil))
+   (client-get-messages this callback {}))
 
   (client-get-messages
-   [this callback since]
-   (get-request (make-uri (if (nil? since)
-                            "messages"
-                            (str "messages?since=" since))
-                          server)
+   [this callback params]
+   (get-request (make-uri (str "messages" (build-query-string params)) server)
                 (fn [e]
                   (let [target (.-target e)
                         text (.getResponseText target)]
                     (callback (unmarshal-messages text))))))
-
   (client-send-message
    [this message callback]
    (post-request (make-uri "message" server)

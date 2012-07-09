@@ -10,7 +10,9 @@
             [goog.ui.Button :as Button]))
 
 (def ^{:private true} title "Flurfunk")
+(def ^{:private true} message-load-limit 20)
 (def ^{:private true} last-fetched nil)
+(def ^{:private true} first-fetched nil)
 (def ^{:private true} active true)
 (def ^{:private true} unread-messages 0)
 (def ^{:private true} mobile? js/flurfunkMobile)
@@ -26,7 +28,8 @@
                 [:textarea#message-textarea]
                 [:button#send-button "Send message"]
                 [:div#waiting-indication]]
-               [:div#message-list]]]))
+               [:div#message-list]]
+              [:button#load-more-button "Load more messages"]]))
 
 (defn- leading-zero [number]
   (str (if (< number 10) "0") number))
@@ -75,7 +78,7 @@
                  [:span.timestamp (format-timestamp (:timestamp message))]
                  [:div.text (format-message-text (:text message))]])))
 
-(defn- append-message
+(defn- prepend-message
   ([message-list message flags]
      (let [message-element (create-message-element
                             message (contains? flags :first-unread))]
@@ -86,7 +89,7 @@
                  (.-offsetHeight message-element)
                  500))))))
 
-(defn- append-messages [message-list messages]
+(defn- prepend-messages [message-list messages]
   (let [reversed-messages (reverse messages)
         first-unread (and (not active) (= unread-messages 0))
         flags (conj #{} (if (and (not mobile?)
@@ -96,10 +99,10 @@
       (doseq [unread-message-div
               (dom/query-elements "div#message-list>*.first-unread")]
         (classes/remove unread-message-div "first-unread")))
-    (append-message message-list (first reversed-messages)
-                    (conj flags (if first-unread :first-unread)))
+    (prepend-message message-list (first reversed-messages)
+                     (conj flags (if first-unread :first-unread)))
     (doseq [message (rest reversed-messages)]
-      (append-message message-list message flags))))
+      (prepend-message message-list message flags))))
 
 (defn- update-title []
   (set! (.-title js/document) (str (if (> unread-messages 0)
@@ -132,10 +135,12 @@
                    (let [message-count (count messages)]
                      (if (> message-count 0)
                        (let [latest-timestamp (:timestamp (first messages))]
+                         (when (nil? last-fetched)
+                           (def first-fetched (:timestamp (last messages))))
                          (when (or (nil? last-fetched)
                                    (> latest-timestamp last-fetched))
                            (def last-fetched latest-timestamp)
-                           (append-messages message-list messages)
+                           (prepend-messages message-list messages)
                            (when (not active)
                              (def unread-messages (+ unread-messages
                                                      message-count))
@@ -144,8 +149,8 @@
                      (compare-and-set! waiting true false)))]
     (js/setTimeout (fn [] (if @waiting (show-waiting-indication))) 500)
     (if (nil? last-fetched)
-      (client/get-messages callback)
-      (client/get-messages callback last-fetched))))
+      (client/get-messages callback {:count message-load-limit})
+      (client/get-messages callback {:since last-fetched}))))
 
 (defn- animate-element-height [element new-height]
   (.play (fx-dom/ResizeHeight. element (.-offsetHeight element) new-height
@@ -171,6 +176,21 @@
        (end-composing message-textarea)
        (update-message-list message-list)))))
 
+(defn- append-messages [message-list messages]
+  (apply dom/append
+         (cons message-list
+               (map #(create-message-element %) messages))))
+
+(defn- load-more-messages [message-list load-more-button]
+  (.setEnabled load-more-button false)
+  (client/get-messages
+   (fn [messages]
+     (when (> (count messages) 0)
+       (def first-fetched (:timestamp (last messages)))
+       (append-messages message-list messages))
+     (.setEnabled load-more-button true))
+   {:before first-fetched :count message-load-limit}))
+
 (defn- update-send-button [send-button]
   (let [author (string/trim (.-value (dom/get-element :author-name-input)))
         text (string/trim (.-value (dom/get-element :message-textarea)))]
@@ -188,12 +208,16 @@
     (.get cookies "author")))
 
 (defn- prepare-elements [author-name-input message-textarea send-button
-                         message-list]
-  (let [send-button-widget (goog.ui/Button. "Send message")]
+                         message-list load-more-button]
+  (let [send-button-widget (goog.ui/Button.)
+        load-more-button-widget (goog.ui/Button.)]
     (.decorate send-button-widget send-button)
     (.setEnabled send-button-widget false)
+    (.decorate load-more-button-widget load-more-button)
     (events/listen send-button-widget goog.ui.Component/EventType.ACTION
                    #(send-message message-list send-button-widget))
+    (events/listen load-more-button-widget goog.ui.Component/EventType.ACTION
+                   #(load-more-messages message-list load-more-button-widget))
     (events/listen author-name-input goog.events/EventType.INPUT
                    (fn [e]
                      (set-author-cookie (.-value author-name-input))
@@ -212,9 +236,10 @@
   (let [author-name-input (dom/get-element :author-name-input)
         message-textarea (dom/get-element :message-textarea)
         send-button (dom/get-element :send-button)
-        message-list (dom/get-element :message-list)]
+        message-list (dom/get-element :message-list)
+        load-more-button (dom/get-element :load-more-button)]
     (prepare-elements author-name-input message-textarea send-button
-                      message-list)
+                      message-list load-more-button)
     (if-let [author (get-author-cookie)]
       (set! (.-value author-name-input) author))
     (if (empty? (.-value author-name-input))
