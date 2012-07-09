@@ -10,6 +10,7 @@
             [goog.ui.Button :as Button]))
 
 (def ^{:private true} title "Flurfunk")
+(def ^{:private true} message-load-limit 20)
 (def ^{:private true} last-fetched nil)
 (def ^{:private true} first-fetched nil)
 (def ^{:private true} active true)
@@ -77,7 +78,7 @@
                  [:span.timestamp (format-timestamp (:timestamp message))]
                  [:div.text (format-message-text (:text message))]])))
 
-(defn- append-message
+(defn- prepend-message
   ([message-list message flags]
      (let [message-element (create-message-element
                             message (contains? flags :first-unread))]
@@ -88,7 +89,7 @@
                  (.-offsetHeight message-element)
                  500))))))
 
-(defn- append-messages [message-list messages]
+(defn- prepend-messages [message-list messages]
   (let [reversed-messages (reverse messages)
         first-unread (and (not active) (= unread-messages 0))
         flags (conj #{} (if (and (not mobile?)
@@ -98,10 +99,10 @@
       (doseq [unread-message-div
               (dom/query-elements "div#message-list>*.first-unread")]
         (classes/remove unread-message-div "first-unread")))
-    (append-message message-list (first reversed-messages)
-                    (conj flags (if first-unread :first-unread)))
+    (prepend-message message-list (first reversed-messages)
+                     (conj flags (if first-unread :first-unread)))
     (doseq [message (rest reversed-messages)]
-      (append-message message-list message flags))))
+      (prepend-message message-list message flags))))
 
 (defn- update-title []
   (set! (.-title js/document) (str (if (> unread-messages 0)
@@ -135,12 +136,11 @@
                      (if (> message-count 0)
                        (let [latest-timestamp (:timestamp (first messages))]
                          (when (nil? last-fetched)
-                           (def first-fetched (:timestamp (last messages)))
-                           (.log js/console (str "First fetched: " first-fetched)))
+                           (def first-fetched (:timestamp (last messages))))
                          (when (or (nil? last-fetched)
                                    (> latest-timestamp last-fetched))
                            (def last-fetched latest-timestamp)
-                           (append-messages message-list messages)
+                           (prepend-messages message-list messages)
                            (when (not active)
                              (def unread-messages (+ unread-messages
                                                      message-count))
@@ -149,8 +149,7 @@
                      (compare-and-set! waiting true false)))]
     (js/setTimeout (fn [] (if @waiting (show-waiting-indication))) 500)
     (if (nil? last-fetched)
-      ;; TODO: Only fetch 20 messages initially
-      (client/get-messages callback)
+      (client/get-messages callback {:count message-load-limit})
       (client/get-messages callback {:since last-fetched}))))
 
 (defn- animate-element-height [element new-height]
@@ -177,15 +176,20 @@
        (end-composing message-textarea)
        (update-message-list message-list)))))
 
+(defn- append-messages [message-list messages]
+  (apply dom/append
+         (cons message-list
+               (map #(create-message-element %) messages))))
+
 (defn- load-more-messages [message-list load-more-button]
   (.setEnabled load-more-button false)
   (client/get-messages
-   {:before first-fetched}
    (fn [messages]
-     (def first-fetched (:timestamp (last messages)))
-     (.log js/console ("First fetched:" first-fetched))
-     (.log js/console "TODO: Display the messages.")
-     (.setEnabled load-more-button true))))
+     (when (> (count messages) 0)
+       (def first-fetched (:timestamp (last messages)))
+       (append-messages message-list messages))
+     (.setEnabled load-more-button true))
+   {:before first-fetched :count message-load-limit}))
 
 (defn- update-send-button [send-button]
   (let [author (string/trim (.-value (dom/get-element :author-name-input)))
