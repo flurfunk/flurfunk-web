@@ -56,6 +56,13 @@
 (defn- marshal-message [message]
   (str "<message author='" (:author message) "'>" (:text message) "</message>"))
 
+(defn- build-query-string [params]
+  (if (empty? params)
+    ""
+    (str "?"
+         (reduce #(str %1 "&" %2)
+                 (map #(str (name %) "=" (% params)) (keys params))))))
+
 (deftype HttpClient [server] Client
   (client-get-messages
    [this callback]
@@ -63,18 +70,11 @@
 
   (client-get-messages
    [this callback params]
-   ;; TODO: Find a nicer way to build the query string
-   (get-request (make-uri
-                 (str
-                  "messages?count=100" ;; Don't hard code the count
-                  (if-let [since (:since params)] (str "&since=" since))
-                  (if-let [before (:before params)] (str "&before=" before)))
-                 server)
+   (get-request (make-uri (str "messages" (build-query-string params)) server)
                 (fn [e]
                   (let [target (.-target e)
                         text (.getResponseText target)]
                     (callback (unmarshal-messages text))))))
-
   (client-send-message
    [this message callback]
    (post-request (make-uri "message" server)
