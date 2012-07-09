@@ -46,7 +46,7 @@
          message-tags)))
 
 (defn- post-request [uri callback content]
-  (XhrIo/send uri (fn [e] (callback)) "post", content))
+  (XhrIo/send uri (fn [e] (callback)) "post" content))
 
 (defn- marshal-message [message]
   (str "<message author='" (:author message) "'>" (:text message) "</message>"))
