@@ -13,8 +13,13 @@
   (client-get-messages
    [this callback params]
    (callback (filter (fn [message]
-                       (> (:timestamp message) (:since params))
-                       (< (:timestamp message) (:since before)))
+                       (and
+                        (if-let [since (:since params)]
+                          (> (:timestamp message) since)
+                          true)
+                        (if-let [before (:before params)]
+                          (< (:timestamp message) before)
+                          true)))
                      @messages)))
 
   (client-send-message
