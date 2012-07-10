@@ -33,7 +33,7 @@
                    body :body}
        (let [proxy-uri (make-proxy-uri uri context)]
          (:body (if (= method :get)
-                  (http-client/get proxy-uri {:query-params params})
+                  (http-client/get proxy-uri {:query-params (dissoc params :*)})
                   (http-client/post proxy-uri {:body (slurp body)})))))
   (route/resources "/")
   (route/resources "/mobile")
