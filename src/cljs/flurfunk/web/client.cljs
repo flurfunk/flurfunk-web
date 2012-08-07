@@ -1,5 +1,6 @@
 (ns flurfunk.web.client
-  (:require [flurfunk.web.dom-helpers :as dom]
+  (:require [clojure.string :as string]
+            [flurfunk.web.dom-helpers :as dom]
             [goog.dom.xml :as xml]
             [goog.net.XhrIo :as XhrIo]))
 
@@ -45,9 +46,11 @@
            (let [text (.-textContent message-tag)
                  id (.getAttribute message-tag "id")
                  author (.getAttribute message-tag "author")
-                 timestamp (js/parseInt (.getAttribute message-tag
-                                                       "timestamp"))]
-             {:id id :author author :timestamp timestamp :text text}))
+                 timestamp (js/parseInt (.getAttribute message-tag "timestamp"))
+                 channels-str (.getAttribute message-tag "channels")
+                 channels (string/split channels-str #"\s*,\s*")]
+             {:id id :author author :timestamp timestamp :channels channels
+              :text text}))
          message-tags)))
 
 (defn- post-request [uri callback content]
