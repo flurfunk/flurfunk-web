@@ -170,7 +170,8 @@
     (.setEnabled send-button false)
     (client/send-message
      {:author (.-value (dom/get-element :author-name-input))
-      :text escaped-text}
+      :text escaped-text
+      :channels ["Users"]}
      (fn []
        (set! (.-value message-textarea) "")
        (end-composing message-textarea)
