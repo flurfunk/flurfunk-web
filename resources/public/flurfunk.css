@@ -82,6 +82,7 @@ div#message-list>* {
     border-bottom: 1px solid #ddd;
     padding: 5px 10px;
     overflow: hidden;
+    position: relative;
 }
 
 div#message-list>*:first-child {
@@ -101,6 +102,22 @@ div#message-list span.timestamp {
     clear: right;
     font-size: 12px;
     font-style: italic;
+}
+
+div#message-list ul.channels {
+    list-style: none;
+    position: absolute;
+    margin: 0;
+    right: 5px;
+    bottom: 10px;
+}
+
+div#message-list ul.channels li {
+    display: inline;
+    margin-right: 5px;
+    color: #888;
+    font-size: 12px;
+    font-weight: bold;
 }
 
 div#message-list div.text {
