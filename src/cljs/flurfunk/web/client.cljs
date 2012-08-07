@@ -54,7 +54,9 @@
   (XhrIo/send uri (fn [e] (callback)) "post" content))
 
 (defn- marshal-message [message]
-  (str "<message author='" (:author message) "'>" (:text message) "</message>"))
+  (let [channels-str (reduce #(str %1 "," %2) (:channels message))]
+    (str "<message author='" (:author message) "' channels='"
+         channels-str "'>" (:text message) "</message>")))
 
 (defn- build-query-string [params]
   (if (empty? params)
