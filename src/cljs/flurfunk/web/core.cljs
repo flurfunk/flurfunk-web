@@ -89,7 +89,7 @@
        (if (contains? flags :animate)
          (.play (fx-dom/ResizeHeight.
                  message-element 0
-                 (.-offsetHeight message-element)
+                 (- (.-offsetHeight message-element) 10)
                  500))))))
 
 (defn- prepend-messages [message-list messages]
