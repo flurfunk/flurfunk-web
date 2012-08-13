@@ -93,6 +93,10 @@ div#message-list>*.first-unread {
     border-bottom: 1px solid #888;
 }
 
+div#message-list {
+    cursor: default;
+}
+
 div#message-list span.author {
     font-weight: bold;
 }
