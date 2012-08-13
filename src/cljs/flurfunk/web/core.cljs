@@ -76,10 +76,10 @@
                        :class (if first-unread "first-unread")}
                  [:span.author (:author message)]
                  [:span.timestamp (format-timestamp (:timestamp message))]
+                 [:div.text (format-message-text (:text message))]
                  (vec (cons :ul.channels
                             (map (fn [channel] [:li channel])
-                                 (:channels message))))
-                 [:div.text (format-message-text (:text message))]])))
+                                 (:channels message))))])))
 
 (defn- prepend-message
   ([message-list message flags]
