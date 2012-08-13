@@ -105,7 +105,6 @@ div#message-list span.timestamp {
     float: right;
     clear: right;
     font-size: 12px;
-    font-style: italic;
 }
 
 div#message-list ul.channels {
