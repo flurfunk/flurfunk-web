@@ -52,3 +52,7 @@ div#message-list span.author {
 div#message-list span.timestamp {
     font-size: 1.0em;
 }
+
+div#message-list ul.channels li, ul#hidden-channel-list li {
+    font-size: 1.2em;
+}
