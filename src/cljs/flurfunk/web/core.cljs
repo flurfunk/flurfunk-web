@@ -28,6 +28,9 @@
                 [:textarea#message-textarea]
                 [:button#send-button "Send message"]
                 [:div#waiting-indication]]
+               [:div#hidden-channels
+                [:label "Hidden channels:"]
+                [:ul#hidden-channel-list]]
                [:div#message-list]]
               [:button#load-more-button "Load more messages"]]))
 
@@ -68,6 +71,59 @@
         text (map-str #(str "<p>" % "</p>") paragraphs)]
     (dom/html (replace-all text "\n" "<br/>"))))
 
+(defn- get-channel-element
+  [channel]
+  (let [elements (dom/query-elements "#hidden-channel-list li")]
+    (first (filter #(= (dom/get-text %) channel) elements))))
+
+(defn- has-channel
+  [message channel]
+  (let [children (dom/get-children message)
+        channels-element (first
+                          (filter #(= (.-className %) "channels") children))
+        channels (map #(dom/get-text %) (dom/get-children channels-element))]
+    (some #(= % channel) channels)))
+
+(defn- find-messages-by-channel
+  [channel]
+  (let [all-messages (dom/query-elements "#message-list>*")]
+   (filter #(has-channel % channel) all-messages)))
+
+(defn- show-hidden-channels
+  [show?]
+  (style/setStyle (dom/get-element :hidden-channels)
+                  "display" (if show? "block" "none")))
+
+(defn- show-channel-messages
+  [channel show?]
+  (doseq [message (find-messages-by-channel channel)]
+    (style/showElement message show?)))
+
+(defn- show-channel
+  [channel]
+  (let [hidden-channel-list (dom/get-element :hidden-channel-list)
+        channel-element (get-channel-element channel)]
+    (.removeChild hidden-channel-list channel-element)
+    (if (empty? (dom/get-children hidden-channel-list))
+      (show-hidden-channels false)))
+  (show-channel-messages channel true))
+
+(defn- hide-channel
+  [channel hidden-channel-list]
+  (when (nil? (get-channel-element channel))
+    (dom/insert-at hidden-channel-list
+                   (dom/element "li"
+                                {:onclick #(show-channel channel)} channel))
+    (show-hidden-channels true)
+    (show-channel-messages channel false)))
+
+(defn- create-channel-element
+  [channel]
+  (let [hidden-channel-list (dom/get-element :hidden-channel-list)]
+    (dom/element "li"
+                 {:onclick #(hide-channel channel hidden-channel-list)}
+                 channel)))
+
 (defn- create-message-element
   ([message]
      (create-message-element message false))
@@ -76,7 +132,10 @@
                        :class (if first-unread "first-unread")}
                  [:span.author (:author message)]
                  [:span.timestamp (format-timestamp (:timestamp message))]
-                 [:div.text (format-message-text (:text message))]])))
+                 [:div.text (format-message-text (:text message))]
+                 (vec (cons :ul.channels
+                            (map create-channel-element
+                                 (:channels message))))])))
 
 (defn- prepend-message
   ([message-list message flags]
@@ -86,7 +145,7 @@
        (if (contains? flags :animate)
          (.play (fx-dom/ResizeHeight.
                  message-element 0
-                 (.-offsetHeight message-element)
+                 (- (.-offsetHeight message-element) 10)
                  500))))))
 
 (defn- prepend-messages [message-list messages]
@@ -170,7 +229,8 @@
     (.setEnabled send-button false)
     (client/send-message
      {:author (.-value (dom/get-element :author-name-input))
-      :text escaped-text}
+      :text escaped-text
+      :channels ["Users"]}
      (fn []
        (set! (.-value message-textarea) "")
        (end-composing message-textarea)
