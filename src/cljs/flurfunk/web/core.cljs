@@ -96,7 +96,7 @@
 
 (defn- show-channel
   [channel]
-  (let [hidden-channel-list (dom/get-element "hidden-channel-list")
+  (let [hidden-channel-list (dom/get-element :hidden-channel-list)
         channel-element (get-channel-element channel)]
     (.removeChild hidden-channel-list channel-element))
   (show-channel-messages channel true))
@@ -111,7 +111,7 @@
 
 (defn- create-channel-element
   [channel]
-  (let [hidden-channel-list (dom/get-element "hidden-channel-list")]
+  (let [hidden-channel-list (dom/get-element :hidden-channel-list)]
     (dom/element "li"
                  {:onclick #(hide-channel channel hidden-channel-list)}
                  channel)))
