@@ -28,6 +28,9 @@
                 [:textarea#message-textarea]
                 [:button#send-button "Send message"]
                 [:div#waiting-indication]]
+               [:div#hidden-channels
+                [:label "Hidden channels:"]
+                [:ul#hidden-channel-list]]
                [:div#message-list]]
               [:button#load-more-button "Load more messages"]]))
 
@@ -68,6 +71,51 @@
         text (map-str #(str "<p>" % "</p>") paragraphs)]
     (dom/html (replace-all text "\n" "<br/>"))))
 
+(defn- get-channel-element
+  [channel]
+  (let [elements (dom/query-elements "#hidden-channel-list li")]
+    (first (filter #(= (dom/get-text %) channel) elements))))
+
+(defn- has-channel
+  [message channel]
+  (let [children (dom/get-children message)
+        channels-element (first
+                          (filter #(= (.-className %) "channels") children))
+        channels (map #(dom/get-text %) (dom/get-children channels-element))]
+    (some #(= % channel) channels)))
+
+(defn- find-messages-by-channel
+  [channel]
+  (let [all-messages (dom/query-elements "#message-list>*")]
+   (filter #(has-channel % channel) all-messages)))
+
+(defn- show-channel-messages
+  [channel show?]
+  (doseq [message (find-messages-by-channel channel)]
+    (style/showElement message show?)))
+
+(defn- show-channel
+  [channel]
+  (let [hidden-channel-list (dom/get-element "hidden-channel-list")
+        channel-element (get-channel-element channel)]
+    (.removeChild hidden-channel-list channel-element))
+  (show-channel-messages channel true))
+
+(defn- hide-channel
+  [channel hidden-channel-list]
+  (when (nil? (get-channel-element channel))
+    (dom/insert-at hidden-channel-list
+                   (dom/element "li"
+                                {:onclick #(show-channel channel)} channel))
+    (show-channel-messages channel false)))
+
+(defn- create-channel-element
+  [channel]
+  (let [hidden-channel-list (dom/get-element "hidden-channel-list")]
+    (dom/element "li"
+                 {:onclick #(hide-channel channel hidden-channel-list)}
+                 channel)))
+
 (defn- create-message-element
   ([message]
      (create-message-element message false))
@@ -78,7 +126,7 @@
                  [:span.timestamp (format-timestamp (:timestamp message))]
                  [:div.text (format-message-text (:text message))]
                  (vec (cons :ul.channels
-                            (map (fn [channel] [:li channel])
+                            (map create-channel-element
                                  (:channels message))))])))
 
 (defn- prepend-message
