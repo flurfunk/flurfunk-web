@@ -33,6 +33,11 @@
         (dom/appendChild parent child))
       parent))
 
+(defn get-text
+  "Get the text content from the passed element."
+  [e]
+  (dom/getTextContent e))
+
 (defn set-text
   "Set the text content for the passed element returning the
   element. If a keyword is passed in the place of e, the element with

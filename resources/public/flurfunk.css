@@ -107,19 +107,36 @@ div#message-list span.timestamp {
     font-size: 12px;
 }
 
-div#message-list ul.channels {
+div#message-list ul.channels, ul#hidden-channel-list {
     list-style: none;
-    margin: 0 -5px 0 0;
+    margin: 0;
     padding: 0;
-    text-align: right;
 }
 
-div#message-list ul.channels li {
+div#message-list ul.channels {
+    text-align: right;
+    margin-right: -5px;
+}
+
+div#hidden-channels {
+    margin-left: 20px;
+}
+
+ul#hidden-channel-list {
+    display: inline;
+}
+
+div#message-list ul.channels li, ul#hidden-channel-list li {
     display: inline;
     margin-right: 5px;
     color: #888;
     font-size: 12px;
     font-weight: bold;
+}
+
+div#message-list ul.channels li:hover, ul#hidden-channel-list li:hover {
+    text-decoration: underline;
+    cursor: pointer;
 }
 
 div#message-list div.text {
