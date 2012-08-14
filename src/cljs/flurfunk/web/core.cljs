@@ -89,6 +89,11 @@
   (let [all-messages (dom/query-elements "#message-list>*")]
    (filter #(has-channel % channel) all-messages)))
 
+(defn- show-hidden-channels
+  [show?]
+  (style/setStyle (dom/get-element :hidden-channels)
+                  "display" (if show? "block" "none")))
+
 (defn- show-channel-messages
   [channel show?]
   (doseq [message (find-messages-by-channel channel)]
@@ -98,7 +103,9 @@
   [channel]
   (let [hidden-channel-list (dom/get-element :hidden-channel-list)
         channel-element (get-channel-element channel)]
-    (.removeChild hidden-channel-list channel-element))
+    (.removeChild hidden-channel-list channel-element)
+    (if (empty? (dom/get-children hidden-channel-list))
+      (show-hidden-channels false)))
   (show-channel-messages channel true))
 
 (defn- hide-channel
@@ -107,6 +114,7 @@
     (dom/insert-at hidden-channel-list
                    (dom/element "li"
                                 {:onclick #(show-channel channel)} channel))
+    (show-hidden-channels true)
     (show-channel-messages channel false)))
 
 (defn- create-channel-element
