@@ -82,6 +82,7 @@ div#message-list>* {
     border-bottom: 1px solid #ddd;
     padding: 5px 10px;
     overflow: hidden;
+    position: relative;
 }
 
 div#message-list>*:first-child {
@@ -92,6 +93,10 @@ div#message-list>*.first-unread {
     border-bottom: 1px solid #888;
 }
 
+div#message-list {
+    cursor: default;
+}
+
 div#message-list span.author {
     font-weight: bold;
 }
@@ -100,7 +105,39 @@ div#message-list span.timestamp {
     float: right;
     clear: right;
     font-size: 12px;
-    font-style: italic;
+}
+
+div#message-list ul.channels, ul#hidden-channel-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+div#message-list ul.channels {
+    text-align: right;
+    margin-right: -5px;
+}
+
+div#hidden-channels {
+    margin-left: 20px;
+    display: none;
+}
+
+ul#hidden-channel-list {
+    display: inline;
+}
+
+div#message-list ul.channels li, ul#hidden-channel-list li {
+    display: inline;
+    margin-right: 5px;
+    color: #888;
+    font-size: 12px;
+    font-weight: bold;
+}
+
+div#message-list ul.channels li:hover, ul#hidden-channel-list li:hover {
+    text-decoration: underline;
+    cursor: pointer;
 }
 
 div#message-list div.text {
