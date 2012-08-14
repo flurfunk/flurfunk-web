@@ -120,6 +120,7 @@ div#message-list ul.channels {
 
 div#hidden-channels {
     margin-left: 20px;
+    display: none;
 }
 
 ul#hidden-channel-list {
