@@ -85,7 +85,7 @@ div#message-list>* {
     position: relative;
 }
 
-div#message-list>*:first-child {
+div#message-list {
     border-top: 1px solid #ddd;
 }
 
