@@ -235,7 +235,7 @@
     (client/send-message
      {:author (.-value (dom/get-element :author-name-input))
       :text escaped-text
-      :channels ["Users"]}
+      :channels ["users"]}
      (fn []
        (set! (.-value message-textarea) "")
        (end-composing message-textarea)
