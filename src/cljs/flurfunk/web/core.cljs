@@ -128,21 +128,26 @@
   ([message]
      (create-message-element message false))
   ([message first-unread]
-     (dom/build [:div {:id (str "message-" (:id message))
-                       :class (if first-unread "first-unread")}
-                 [:span.author (:author message)]
-                 [:span.timestamp (format-timestamp (:timestamp message))]
-                 [:div.text (format-message-text (:text message))]
-                 (vec (cons :ul.channels
-                            (map create-channel-element
-                                 (:channels message))))])))
+     (let [channels (:channels message) 
+           element (dom/build
+                    [:div {:id (str "message-" (:id message))
+                           :class (if first-unread "first-unread")}
+                     [:span.author (:author message)]
+                     [:span.timestamp (format-timestamp (:timestamp message))]
+                     [:div.text (format-message-text (:text message))]
+                     (vec (cons :ul.channels
+                                (map create-channel-element channels)))])]
+       (if (every? #(get-channel-element %) channels)
+         (style/showElement element false))
+       element)))
 
 (defn- prepend-message
   ([message-list message flags]
      (let [message-element (create-message-element
                             message (contains? flags :first-unread))]
        (dom/insert-at message-list message-element 0)
-       (if (contains? flags :animate)
+       (if (and (style/isElementShown message-element)
+                (contains? flags :animate))
          (.play (fx-dom/ResizeHeight.
                  message-element 0
                  (- (.-offsetHeight message-element) 10)
