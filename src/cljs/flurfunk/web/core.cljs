@@ -168,7 +168,7 @@
      (let [reversed-messages (reverse messages)
            first-unread (and (not active) (= unread-messages 0))
            flags (conj #{} (if (and (not mobile?)
-                                    (= (count messages) 1))
+                                    (= (count visible-messages) 1))
                              :animate))]
        (when first-unread
          (doseq [unread-message-div
