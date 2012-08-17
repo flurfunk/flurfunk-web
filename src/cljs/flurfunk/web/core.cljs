@@ -128,6 +128,10 @@
                  {:onclick #(hide-channel channel hidden-channel-list)}
                  channel)))
 
+(defn- message-hidden?
+  [message]
+  (every? channel-hidden? (:channels message)))
+
 (defn- create-message-element
   ([message]
      (create-message-element message false))
@@ -141,7 +145,7 @@
                      [:div.text (format-message-text (:text message))]
                      (vec (cons :ul.channels
                                 (map create-channel-element channels)))])]
-       (if (every? channel-hidden? channels)
+       (if (message-hidden? message)
          (style/showElement element false))
        element)))
 
@@ -157,20 +161,25 @@
                  (- (.-offsetHeight message-element) 10)
                  500))))))
 
-(defn- prepend-messages [message-list messages]
-  (let [reversed-messages (reverse messages)
-        first-unread (and (not active) (= unread-messages 0))
-        flags (conj #{} (if (and (not mobile?)
-                                 (= (count messages) 1))
-                          :animate))]
-    (when first-unread
-      (doseq [unread-message-div
-              (dom/query-elements "div#message-list>*.first-unread")]
-        (classes/remove unread-message-div "first-unread")))
-    (prepend-message message-list (first reversed-messages)
-                     (conj flags (if first-unread :first-unread)))
-    (doseq [message (rest reversed-messages)]
-      (prepend-message message-list message flags))))
+(defn- prepend-messages
+  ([message-list messages]
+     (prepend-messages messages messages))
+  ([message-list messages visible-messages]
+     (let [reversed-messages (reverse messages)
+           first-unread (and (not active) (= unread-messages 0))
+           flags (conj #{} (if (and (not mobile?)
+                                    (= (count messages) 1))
+                             :animate))]
+       (when first-unread
+         (doseq [unread-message-div
+                 (dom/query-elements "div#message-list>*.first-unread")]
+           (classes/remove unread-message-div "first-unread")))
+       (doseq [message reversed-messages]
+         (prepend-message message-list message
+                          (if (and first-unread
+                                   (= message (last visible-messages)))
+                            (conj flags :first-unread)
+                            flags))))))
 
 (defn- update-title []
   (set! (.-title js/document) (str (if (> unread-messages 0)
@@ -201,11 +210,8 @@
   (let [waiting (atom true)
         callback (fn [messages]
                    (let [message-count (count messages)
-                         visible-messages (filter
-                                           (fn [message]
-                                             (some #(not (channel-hidden? %))
-                                                   (:channels message)))
-                                           messages)]
+                         visible-messages (filter #(not (message-hidden? %))
+                                                  messages)]
                      (if (> message-count 0)
                        (let [latest-timestamp (:timestamp (first messages))]
                          (when (nil? last-fetched)
@@ -213,7 +219,8 @@
                          (when (or (nil? last-fetched)
                                    (> latest-timestamp last-fetched))
                            (def last-fetched latest-timestamp)
-                           (prepend-messages message-list messages)
+                           (prepend-messages message-list messages
+                                             visible-messages)
                            (when (not active)
                              (def unread-messages (+ unread-messages
                                                      (count visible-messages)))
