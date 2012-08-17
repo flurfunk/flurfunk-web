@@ -108,9 +108,13 @@
       (show-hidden-channels false)))
   (show-channel-messages channel true))
 
+(defn- channel-hidden?
+  [channel]
+  (not (nil? (get-channel-element channel))))
+
 (defn- hide-channel
   [channel hidden-channel-list]
-  (when (nil? (get-channel-element channel))
+  (when (not (channel-hidden? channel))
     (dom/insert-at hidden-channel-list
                    (dom/element "li"
                                 {:onclick #(show-channel channel)} channel))
@@ -137,7 +141,7 @@
                      [:div.text (format-message-text (:text message))]
                      (vec (cons :ul.channels
                                 (map create-channel-element channels)))])]
-       (if (every? #(get-channel-element %) channels)
+       (if (every? channel-hidden? channels)
          (style/showElement element false))
        element)))
 
@@ -196,7 +200,12 @@
 (defn- update-message-list [message-list]
   (let [waiting (atom true)
         callback (fn [messages]
-                   (let [message-count (count messages)]
+                   (let [message-count (count messages)
+                         visible-messages (filter
+                                           (fn [message]
+                                             (some #(not (channel-hidden? %))
+                                                   (:channels message)))
+                                           messages)]
                      (if (> message-count 0)
                        (let [latest-timestamp (:timestamp (first messages))]
                          (when (nil? last-fetched)
@@ -207,7 +216,7 @@
                            (prepend-messages message-list messages)
                            (when (not active)
                              (def unread-messages (+ unread-messages
-                                                     message-count))
+                                                     (count visible-messages)))
                              (update-title)))))
                      (hide-waiting-indication)
                      (compare-and-set! waiting true false)))]
