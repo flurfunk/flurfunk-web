@@ -9,7 +9,7 @@
                  [ring/ring-jetty-adapter "0.3.11"]
                  [clj-http "0.3.6"]]
   :plugins [[lein-cljsbuild "0.1.6"]
-            [lein-ring "0.6.3"]]
+            [lein-ring "0.6.5"]]
   :hooks [leiningen.cljsbuild]
   :cljsbuild
   {:builds {:prod
