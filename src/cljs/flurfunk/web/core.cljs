@@ -58,6 +58,7 @@
 (defn- escape-html [string]
   (replace-all string [["&" "&amp;"]
                        ["\"" "&quot;"]
+                       ["'" "&#39;"]
                        ["<" "&lt;"]
                        [">" "&gt;"]]))
 
