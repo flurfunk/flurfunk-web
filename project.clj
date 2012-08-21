@@ -1,4 +1,4 @@
-(defproject de.viaboxx.flurfunk/flurfunk-web "0.1.0-SNAPSHOT"
+(defproject de.viaboxx.flurfunk/flurfunk-web "1.0"
   :description "Web interface for Flurfunk"
   :source-paths ["src/clj"]
   :cljs-source-path "src/cljs"
