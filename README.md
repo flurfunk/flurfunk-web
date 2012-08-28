@@ -64,7 +64,7 @@ This will try to connect to a server running at
 http://localhost:4000. If your server is running somewhere else, you
 need to set the _flurfunk.server_ system property:
 
-    java -jar target/flurfunk-web.jar -Dflurfunk.server=http://localhost:1337
+    java -jar -Dflurfunk.server=http://localhost:1337 target/flurfunk-web.jar 
 
 License
 -------
