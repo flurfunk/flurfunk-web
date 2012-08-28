@@ -19,7 +19,8 @@
 
 (defn- create-dom []
   (dom/build [:div#content
-              [:h1 title]
+              [:h1
+               [:a {:href "http://flurfunk.github.com"} title]]
               [:div#messages
                [:div#message-input
                 [:div
@@ -338,3 +339,4 @@
                                   (.blur message-textarea))))))
 
 (-main)
+

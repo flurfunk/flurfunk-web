@@ -7,11 +7,15 @@ html {
     background-color: #f6f6f6;
 }
 
-h1 {
+h1, h1 a:visited {
     color: #c00;
     font-size: 35px;
     margin-top: 10px;
     margin-bottom: 10px;
+}
+
+h1 a, h1 a:hover {
+    text-decoration: none;
 }
 
 label {
