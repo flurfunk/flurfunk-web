@@ -1,7 +1,7 @@
 (ns flurfunk.web.jetty
   "Runs Flurfunk in Jetty"
-  (:use ring.adapter.jetty
-        flurfunk.web.routes)
+  (:require [ring.adapter.jetty :as jetty]
+            [flurfunk.web.routes :as routes])
   (:gen-class))
 
 (def default-port 8080)
@@ -38,7 +38,7 @@
 (defn -main [& args]
   (let [port (get-port)]
     (do (print-version)
-      (try (run-jetty app {:port (Integer. port)})
+      (try (jetty/run-jetty routes/app {:port (Integer. port)})
         (catch NumberFormatException e
           (println (str "Invalid port number: '" port "'"))
           (System/exit 1))))))
