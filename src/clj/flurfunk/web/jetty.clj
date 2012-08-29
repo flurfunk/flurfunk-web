@@ -1,7 +1,8 @@
 (ns flurfunk.web.jetty
-  "Runs Flurfunk in Jetty"
+  "Runs flurfunk-web in Jetty"
   (:require [ring.adapter.jetty :as jetty]
-            [flurfunk.web.routes :as routes])
+            [flurfunk.web.routes :as routes]
+            [clojure.java.io :as io])
   (:gen-class))
 
 (def default-port 8080)
@@ -15,7 +16,7 @@
         default-port)))
 
 (defn- load-props [file-name]
-    (with-open [^java.io.Reader reader (clojure.java.io/reader (clojure.java.io/resource file-name))]
+    (with-open [^java.io.Reader reader (io/reader (io/resource file-name))]
           (let [props (java.util.Properties.)]
                   (.load props reader)
                   (into {} (for [[k v] props] [(keyword k) (str v)])))))
